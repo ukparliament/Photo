@@ -1,4 +1,4 @@
-﻿namespace ImageAPI
+﻿namespace Parliament.Photo.Api
 {
     public class ImageRequestFormat
     {
@@ -10,6 +10,5 @@
             MimeType = mimeType;
             Extensions = extensions;
         }
-
     }
 }

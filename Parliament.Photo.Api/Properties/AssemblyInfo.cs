@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ImageAPI")]
+[assembly: AssemblyTitle("Parliament.Photo.Api")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ImageAPI")]
+[assembly: AssemblyProduct("Parliament.Photo.Api")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("cd0c5ffe-29b5-4fce-bd3b-e8216c95bb64")]
+[assembly: Guid("04640464-34d1-4a09-886f-fc1d97eb2d0b")]
 
 // Version information for an assembly consists of the following four values:
 //
