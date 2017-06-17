@@ -1,7 +1,7 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
-    using System;
     using System.IO;
+    using System.Web.Hosting;
     using System.Web.Http;
 
     public class ImageController : ApiController
@@ -14,8 +14,7 @@
 
         private Stream getRawSource(string id)
         {
-            //TODO: Implement sample image
-            throw new NotImplementedException();
+            return File.OpenRead(HostingEnvironment.MapPath("~/rdf.png"));
         }
     }
 }

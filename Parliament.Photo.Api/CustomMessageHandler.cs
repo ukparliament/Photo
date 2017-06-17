@@ -1,8 +1,8 @@
 ﻿namespace Parliament.Photo.Api
 {
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -12,15 +12,17 @@
         {
             var response = await base.SendAsync(request, cancellationToken);
 
-            if ((response != null) && (response.StatusCode == System.Net.HttpStatusCode.NotAcceptable))
+            if (response.StatusCode == HttpStatusCode.NotAcceptable)
             {
-                string[] mediaTypes = request.GetConfiguration()
+                var = request.GetConfiguration()
                     .Formatters
                     .Where(mediaFormatter => mediaFormatter.GetType() == typeof(ImageMediaFormatter))
                     .SelectMany(mediaFormatter => mediaFormatter.SupportedMediaTypes)
                     .Select(mediaType => mediaType.MediaType)
+                    .Distinct()
                     .ToArray();
-                response.Content = new StringContent(string.Join(",", mediaTypes), Encoding.UTF8, "text/plain");
+
+                response.Content = new StringContent(string.Join(",", mediaTypes));
             }
 
             return response;

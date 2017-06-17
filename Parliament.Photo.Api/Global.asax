@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Parliament.Search.Api.Global" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Parliament.Photo.Api.Global" Language="C#" %>

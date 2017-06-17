@@ -4,25 +4,19 @@
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Formatting;
-    using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using System.Web;
 
     public class ImageMediaFormatter : MediaTypeFormatter
     {
-        public ImageMediaFormatter(ImageRequestFormat imageRequestFormat)
+        public ImageMediaFormatter(MediaTypeMapping mapping)
         {
-            var mediaType = new MediaTypeHeaderValue(imageRequestFormat.MimeType);
-            SupportedMediaTypes.Add(mediaType);
-            foreach (string extension in imageRequestFormat.Extensions)
-            {
-                this.AddUriPathExtensionMapping(extension, mediaType);
-            }
+            this.SupportedMediaTypes.Add(mapping.MediaType);
 
-            this.AddQueryStringMapping("format", imageRequestFormat.MimeType, mediaType);
+            this.MediaTypeMappings.Add(mapping);
         }
 
         public override bool CanReadType(Type type)
@@ -32,46 +26,42 @@
 
         public override bool CanWriteType(Type type)
         {
-            return type == typeof(Stream);
+            return typeof(Stream).IsAssignableFrom(type);
         }
 
         public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
-            var imageFormat = getFormatOutput(HttpContext.Current.Request);
+            var format = ChooseFormat();
+
             return Task.Factory.StartNew(() =>
             {
-                var img = Image.FromStream(((Stream)value));
-                img.Save(writeStream, imageFormat);
+                var img = Image.FromStream(value as Stream);
+                img.Save(writeStream, format);
             });
         }
 
-        public ImageFormat getFormatOutput(HttpRequest request)
+        private ImageFormat ChooseFormat()
         {
-            ImageFormat imageFormat = null;
-            switch (this.SupportedMediaTypes[0].MediaType)
+            switch (this.SupportedMediaTypes.Single().MediaType)
             {
-                case "image/bmp":
-                    imageFormat = ImageFormat.Bmp;
-                    break;
-
-                case "image/gif":
-                    imageFormat = ImageFormat.Gif;
-                    break;
+                case "image/png":
+                    return ImageFormat.Png;
 
                 case "image/jpeg":
-                    imageFormat = ImageFormat.Jpeg;
-                    break;
-
-                case "image/png":
-                    imageFormat = ImageFormat.Png;
-                    break;
+                    return ImageFormat.Jpeg;
 
                 case "image/tiff":
-                    imageFormat = ImageFormat.Tiff;
-                    break;
-            }
+                    return ImageFormat.Tiff;
 
-            return imageFormat;
+                case "image/gif":
+                    return ImageFormat.Gif;
+
+                case "image/bmp":
+                    return ImageFormat.Bmp;
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }
