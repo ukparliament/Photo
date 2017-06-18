@@ -148,9 +148,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AIExceptionLogger.cs" />
-    <Compile Include="ImageContentNegotiator.cs" />
-    <Compile Include="ImageMediaFormatter.cs" />
-    <Compile Include="CustomMessageHandler.cs" />
+    <Compile Include="ImageStreamNegotiator.cs" />
+    <Compile Include="ImageStreamFormatter.cs" />
+    <Compile Include="NotAcceptablePayloadHandler.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="DependencyResolver.cs" />
     <Compile Include="Global.asax.cs">

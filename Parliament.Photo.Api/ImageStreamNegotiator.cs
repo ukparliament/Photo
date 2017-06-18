@@ -6,26 +6,26 @@
     using System.Net.Http;
     using System.Net.Http.Formatting;
 
-    public class ImageContentNegotiator : DefaultContentNegotiator
+    public class ImageStreamNegotiator : DefaultContentNegotiator
     {
         public override ContentNegotiationResult Negotiate(Type type, HttpRequestMessage request, IEnumerable<MediaTypeFormatter> formatters)
         {
-            // Let the framework find a formatter.
-            var baseResult = base.Negotiate(type, request, formatters);
+            // Let the framework do the actual content negotiation.
+            var result = base.Negotiate(type, request, formatters);
 
             // Is this an image?
             if (typeof(Stream).IsAssignableFrom(type))
             {
                 // Is it a non-image formatter?
-                if (!(baseResult.Formatter is ImageMediaFormatter))
+                if (!(result.Formatter is ImageStreamFormatter))
                 {
-                    // We shouldn't try to serialize it.
+                    // Ignore this result. This is how we generate a 406.
                     return null;
                 }
             }
 
             // Otherwise let the framework serialize it.
-            return baseResult;
+            return result;
         }
     }
 }

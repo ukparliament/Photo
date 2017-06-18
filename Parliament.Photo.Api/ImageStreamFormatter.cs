@@ -1,6 +1,7 @@
 ﻿namespace Parliament.Photo.Api
 {
     using System;
+    using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.IO;
@@ -10,12 +11,11 @@
     using System.Net.Http.Formatting;
     using System.Threading.Tasks;
 
-    public class ImageMediaFormatter : MediaTypeFormatter
+    public class ImageStreamFormatter : MediaTypeFormatter
     {
-        public ImageMediaFormatter(MediaTypeMapping mapping)
+        public ImageStreamFormatter(MediaTypeMapping mapping)
         {
             this.SupportedMediaTypes.Add(mapping.MediaType);
-
             this.MediaTypeMappings.Add(mapping);
         }
 
@@ -31,7 +31,7 @@
 
         public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
-            var format = ChooseFormat();
+            var format = this.ChooseFormat();
 
             return Task.Factory.StartNew(() =>
             {
@@ -42,26 +42,22 @@
 
         private ImageFormat ChooseFormat()
         {
-            switch (this.SupportedMediaTypes.Single().MediaType)
+            var mapping = new Dictionary<string, ImageFormat>
             {
-                case "image/png":
-                    return ImageFormat.Png;
+                { "image/png", ImageFormat.Png },
+                { "image/jpeg", ImageFormat.Jpeg },
+                { "image/tiff", ImageFormat.Tiff },
+                { "image/gif", ImageFormat.Gif },
+                { "image/bmp", ImageFormat.Bmp },
+            };
 
-                case "image/jpeg":
-                    return ImageFormat.Jpeg;
-
-                case "image/tiff":
-                    return ImageFormat.Tiff;
-
-                case "image/gif":
-                    return ImageFormat.Gif;
-
-                case "image/bmp":
-                    return ImageFormat.Bmp;
-
-                default:
-                    throw new NotSupportedException();
+            var current = this.SupportedMediaTypes.Single().MediaType;
+            if (mapping.TryGetValue(current, out ImageFormat format))
+            {
+                return format;
             }
+
+            throw new NotSupportedException();
         }
     }
 }
