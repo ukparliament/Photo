@@ -15,6 +15,11 @@
     {
         public ImageStreamFormatter(MediaTypeMapping mapping)
         {
+            if (mapping == null)
+            {
+                throw new ArgumentNullException("mapping");
+            }
+
             this.SupportedMediaTypes.Add(mapping.MediaType);
             this.MediaTypeMappings.Add(mapping);
         }

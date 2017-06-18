@@ -1,6 +1,7 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
     using System.IO;
+    using System.Net;
     using System.Web.Hosting;
     using System.Web.Http;
 
@@ -8,13 +9,20 @@
     {
         public Stream Get(string id, string ext = null, string format = null, int? width = null, int? height = null, string crop = null)
         {
-            var source = getRawSource(id);
+            var source = ImageController.GetRawSource(id);
             return source;
         }
 
-        private Stream getRawSource(string id)
+        private static Stream GetRawSource(string id)
         {
-            return File.OpenRead(HostingEnvironment.MapPath("~/rdf.png"));
+            var path = HostingEnvironment.MapPath($"~/{id}");
+
+            if (!File.Exists(path))
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+
+            return File.OpenRead(path);
         }
     }
 }
