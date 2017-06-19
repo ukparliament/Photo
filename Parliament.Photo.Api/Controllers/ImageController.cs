@@ -5,9 +5,13 @@
     using System.Web.Hosting;
     using System.Web.Http;
 
+    [ImageControllerConfiguration]
+    [RoutePrefix("image")]
     public class ImageController : ApiController
     {
-        public Stream Get(string id, string ext = null, string format = null, int? width = null, int? height = null, string crop = null)
+        [Route("{id}")]
+        [Route("{id}.{ext:regex(^(?:(?!xmp).)*$)}")]
+        public Stream Get(string id, string format = null, int? width = null, int? height = null, string crop = null)
         {
             var source = ImageController.GetRawSource(id);
             return source;
@@ -15,7 +19,7 @@
 
         private static Stream GetRawSource(string id)
         {
-            var path = HostingEnvironment.MapPath($"~/{id}");
+            var path = HostingEnvironment.MapPath($"~/Images/{id}");
 
             if (!File.Exists(path))
             {
