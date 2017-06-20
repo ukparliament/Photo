@@ -6,11 +6,8 @@
     using System.Web.Http;
 
     [ImageControllerConfiguration]
-    [RoutePrefix("image")]
     public class ImageController : ApiController
     {
-        [Route("{id}")]
-        [Route("{id}.{ext:regex(^(?:(?!xmp).)*$)}")]
         public Stream Get(string id, string format = null, int? width = null, int? height = null, string crop = null)
         {
             var source = ImageController.GetRawSource(id);

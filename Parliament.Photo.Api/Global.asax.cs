@@ -15,13 +15,13 @@
 
             TelemetryConfiguration.Active.InstrumentationKey = ConfigurationManager.AppSettings["ApplicationInsightsInstrumentationKey"];
 
+            config.Routes.MapHttpRoute("Metadata", "{id}.xmp", new { controller = "Metadata" });
+            config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" });
+            config.Routes.MapHttpRoute("ImageNoExtension", "{id}", new { controller = "Image" });
+
             config.Services.Add(typeof(IExceptionLogger), new AIExceptionLogger());
 
             config.MessageHandlers.Add(new NotAcceptablePayloadHandler());
-
-            config.MapHttpAttributeRoutes();
-
-            config.EnsureInitialized();
         }
     }
 }

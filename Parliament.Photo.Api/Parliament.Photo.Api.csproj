@@ -158,7 +158,7 @@
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\Configuration\MetadataControllerConfigurationAttribute.cs" />
     <Compile Include="XmpFormatter.cs" />
-    <Compile Include="ImageStreamNegotiator.cs" />
+    <Compile Include="NoDefaultContentNegotiator.cs" />
     <Compile Include="ImageStreamFormatter.cs" />
     <Compile Include="NotAcceptablePayloadHandler.cs" />
     <Compile Include="Controllers\ImageController.cs" />

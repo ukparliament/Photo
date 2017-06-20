@@ -6,10 +6,8 @@
     using XmpCore.Options;
 
     [MetadataControllerConfiguration]
-    [RoutePrefix("image")]
     public class MetadataController : ApiController
     {
-        [Route("{id}.xmp")]
         public IXmpMeta Get(string id)
         {
             var xmp = XmpMetaFactory.Create();

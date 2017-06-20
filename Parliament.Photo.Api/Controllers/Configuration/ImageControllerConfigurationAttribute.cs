@@ -9,7 +9,8 @@
     {
         public void Initialize(HttpControllerSettings controllerSettings, HttpControllerDescriptor controllerDescriptor)
         {
-            controllerSettings.Services.Replace(typeof(IContentNegotiator), new ImageStreamNegotiator());
+            controllerSettings.Services.Replace(typeof(IContentNegotiator), new NoDefaultContentNegotiator());
+            controllerSettings.Formatters.Clear();
 
             var mappingData = new[] {
                 new {
