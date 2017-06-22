@@ -1,14 +1,62 @@
 ﻿namespace Parliament.Photo.Api
 {
     using Microsoft.ApplicationInsights.Extensibility;
+    using Parliament.Photo.Api.Controllers;
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Web;
     using System.Web.Http;
     using System.Web.Http.ExceptionHandling;
+    using System.Windows.Media.Imaging;
 
     public class Global : HttpApplication
     {
+        public static readonly IEnumerable<MappingData> mappingData = new MappingData[] {
+                new MappingData {
+                    MediaType = "image/png",
+                    Extensions = new[] {
+                        "png"
+                    },
+                    MetadataFormat = "png",
+                    Formatter = typeof(PngBitmapEncoder)
+                },
+                new MappingData {
+                    MediaType = "image/jpeg",
+                    Extensions = new[] {
+                        "jpg",
+                        "jpe",
+                        "jpeg"
+                    },
+                    MetadataFormat = "jpg",
+                    Formatter = typeof(JpegBitmapEncoder)
+                },
+                new MappingData {
+                    MediaType = "image/gif",
+                    Extensions = new[] {
+                        "gif"
+                    },
+                    MetadataFormat = "gif",
+                    Formatter = typeof(GifBitmapEncoder)
+                },
+                new MappingData {
+                    MediaType = "image/tiff",
+                    Extensions = new[] {
+                        "tif",
+                        "tiff"
+                    },
+                    MetadataFormat = "tiff",
+                    Formatter = typeof(TiffBitmapEncoder)
+                },
+                new MappingData {
+                    MediaType = "image/bmp",
+                    Extensions = new[] {
+                        "bmp"
+                    },
+                    Formatter = typeof(BmpBitmapEncoder)
+                }
+            };
+
         protected void Application_Start(object sender, EventArgs e)
         {
             var config = GlobalConfiguration.Configuration;

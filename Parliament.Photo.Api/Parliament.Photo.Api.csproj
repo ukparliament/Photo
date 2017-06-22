@@ -68,6 +68,7 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System.Net.Http, Version=4.1.1.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Http.4.3.2\lib\net46\System.Net.Http.dll</HintPath>
     </Reference>
@@ -85,9 +86,9 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Configuration" />
+    <Reference Include="WindowsBase" />
     <Reference Include="XmpCore, Version=5.1.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\XmpCore.5.1.3\lib\net35\XmpCore.dll</HintPath>
     </Reference>
@@ -129,11 +130,13 @@
     <Compile Include="Controllers\Configuration\BadRequestControllerConfigurationAttribute.cs" />
     <Compile Include="Controllers\Configuration\DefaultMethodSelector.cs" />
     <Compile Include="Controllers\Configuration\ImageControllerConfigurationAttribute.cs" />
+    <Compile Include="MappingData.cs" />
+    <Compile Include="Image.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\Configuration\MetadataControllerConfigurationAttribute.cs" />
     <Compile Include="XmpFormatter.cs" />
     <Compile Include="NoDefaultContentNegotiator.cs" />
-    <Compile Include="ImageStreamFormatter.cs" />
+    <Compile Include="ImageFormatter.cs" />
     <Compile Include="NotAcceptablePayloadHandler.cs" />
     <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Global.asax.cs">

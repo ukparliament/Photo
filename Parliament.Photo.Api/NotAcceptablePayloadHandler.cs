@@ -20,7 +20,6 @@
                 var mediaTypes = request
                     .GetConfiguration()
                     .Formatters
-                    .OfType<ImageStreamFormatter>()
                     .SelectMany(mediaFormatter => mediaFormatter.SupportedMediaTypes)
                     .Select(mediaType => mediaType.MediaType)
                     .Distinct();
