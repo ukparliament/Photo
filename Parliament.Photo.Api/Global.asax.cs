@@ -18,6 +18,7 @@
             config.Routes.MapHttpRoute("Metadata", "{id}.xmp", new { controller = "Metadata" });
             config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" });
             config.Routes.MapHttpRoute("ImageNoExtension", "{id}", new { controller = "Image" });
+            config.Routes.MapHttpRoute("CatchAllBadRequest", "{*uri}", new { controller = "BadRequest" });
 
             config.Services.Add(typeof(IExceptionLogger), new AIExceptionLogger());
 

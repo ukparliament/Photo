@@ -125,6 +125,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AIExceptionLogger.cs" />
+    <Compile Include="Controllers\BadRequestController.cs" />
+    <Compile Include="Controllers\Configuration\BadRequestControllerConfigurationAttribute.cs" />
+    <Compile Include="Controllers\Configuration\DefaultMethodSelector.cs" />
     <Compile Include="Controllers\Configuration\ImageControllerConfigurationAttribute.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\Configuration\MetadataControllerConfigurationAttribute.cs" />
