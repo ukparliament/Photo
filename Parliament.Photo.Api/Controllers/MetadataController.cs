@@ -1,6 +1,5 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
-    using System;
     using System.Web.Http;
     using XmpCore;
     using XmpCore.Options;
@@ -12,10 +11,8 @@
         {
             var xmp = XmpMetaFactory.Create();
 
-            XmpMetaFactory.SchemaRegistry.RegisterNamespace(XmpConstants.NsDC, "dc");
-            XmpMetaFactory.SchemaRegistry.RegisterNamespace(XmpConstants.NsIptccore, "Iptc4xmpCore");
-            XmpMetaFactory.SchemaRegistry.RegisterNamespace(XmpConstants.NsRdf, "rdf");
-            XmpMetaFactory.SchemaRegistry.RegisterNamespace("https://id.parliament.uk/schema/", "parl");
+            XmpMetaFactory.SchemaRegistry.RegisterNamespace("http://id.parliament.uk/", "id");
+            XmpMetaFactory.SchemaRegistry.RegisterNamespace("http://id.parliament.uk/schema/", "schema");
 
             xmp.SetProperty(XmpConstants.NsIptccore, "CiAdrCity", "London");
             xmp.SetProperty(XmpConstants.NsIptccore, "CiAdrCtry", "UK");
@@ -32,8 +29,17 @@
             xmp.SetProperty(XmpConstants.NsDC, "title", ":firsNtame :lastName");
             xmp.SetProperty(XmpConstants.NsDC, "description", ":firstName :lastName - UK Parliament official portraits 2017");
 
-            xmp.SetProperty("https://id.parliament.uk/schema/", "Person", "PERSON");
-            xmp.SetProperty(XmpConstants.NsRdf, "type", new Uri("http://example.com/Person"), new PropertyOptions { IsUri = true });
+            // <rdf:Description rdf:about="http://id.parliament.uk/IMAGE1" />
+            xmp.SetObjectName("http://id.parliament.uk/IMAGE1");
+
+            // id:IMAGE1 a schema:Image
+            xmp.SetProperty(XmpConstants.NsRdf, "type", "http://id.parliament.uk/schema/Image", new PropertyOptions { IsUri = true });
+
+            // id:IMAGE1 schema:parlHasSubject id:PERSON1
+            xmp.SetProperty("http://id.parliament.uk/schema/", "imageHasSubject", "http://id.parliament.uk/PERSON1", new PropertyOptions { IsUri = true });
+
+            // id:PERSON1 a schema:Person
+            xmp.SetQualifier("http://id.parliament.uk/schema/", "imageHasSubject", XmpConstants.NsRdf, "type", "http://id.parliament.uk/schema/Person", new PropertyOptions { IsUri = true });
 
             return xmp;
         }

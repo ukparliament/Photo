@@ -1,8 +1,8 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
-    using System.IO;
+    using Microsoft.WindowsAzure.Storage;
+    using System.Configuration;
     using System.Net;
-    using System.Web.Hosting;
     using System.Web.Http;
     using System.Windows.Media.Imaging;
 
@@ -23,14 +23,18 @@
 
         private static BitmapFrame GetRawSource(string id)
         {
-            var path = HostingEnvironment.MapPath($"~/Images/{id}");
+            var connectionString = ConfigurationManager.AppSettings["PhotoStorage"];
+            var account = CloudStorageAccount.Parse(connectionString);
+            var client = account.CreateCloudBlobClient();
+            var container = client.GetContainerReference("photo");
+            var blob = container.GetBlobReference(id);
 
-            if (!File.Exists(path))
+            if (!blob.Exists())
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
 
-            return BitmapFrame.Create(File.OpenRead(path));
+            return BitmapFrame.Create(blob.OpenRead());
         }
     }
 }
