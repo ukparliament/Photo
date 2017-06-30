@@ -1,40 +1,42 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
     using Microsoft.WindowsAzure.Storage;
+    using Microsoft.WindowsAzure.Storage.Blob;
     using System.Configuration;
+    using System.IO;
     using System.Net;
+    using System.Net.Http;
     using System.Web.Http;
-    using System.Windows.Media.Imaging;
 
     [ImageControllerConfiguration]
     public class ImageController : ApiController
     {
-        public Image Get(string id, int? width = null, int? height = null, string crop = null)
+        public IHttpActionResult Get(string id, int? width = null, int? height = null, string crop = null)
         {
-            var source = ImageController.GetRawSource(id);
-            var metadata = new MetadataController().Get(id);
+            var imageBlob = ImageController.GetImageBlob(id);
 
-            return new Image
+            if (!imageBlob.Exists())
             {
-                Bitmap = source,
-                Metadata = metadata
+                return this.NotFound();
+            }
+
+            var image = new Image
+            {
+                Bitmap = imageBlob.OpenRead(),
+                Metadata = new MetadataController().Get(id)
             };
+
+            return this.Ok(image);
         }
 
-        private static BitmapFrame GetRawSource(string id)
+        private static CloudBlob GetImageBlob(string id)
         {
             var connectionString = ConfigurationManager.AppSettings["PhotoStorage"];
             var account = CloudStorageAccount.Parse(connectionString);
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference("photo");
-            var blob = container.GetBlobReference(id);
 
-            if (!blob.Exists())
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
-
-            return BitmapFrame.Create(blob.OpenRead());
+            return container.GetBlobReference(id);
         }
     }
 }

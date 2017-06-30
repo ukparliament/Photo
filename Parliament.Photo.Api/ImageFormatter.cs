@@ -1,5 +1,7 @@
 ﻿namespace Parliament.Photo.Api
 {
+    using FreeImageAPI;
+    using FreeImageAPI.Metadata;
     using Parliament.Photo.Api.Controllers;
     using System;
     using System.IO;
@@ -10,7 +12,6 @@
     using System.Threading.Tasks;
     using System.Windows.Media.Imaging;
     using XmpCore;
-    using XmpCore.Impl;
     using XmpCore.Options;
 
     public class ImageFormatter : MediaTypeFormatter
@@ -39,73 +40,23 @@
         public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
             var image = value as Image;
-            var bitmap = image.Bitmap;
-            var format = this.SupportedMediaTypes.Single().MediaType;
-            var metadata = ConvertMetadata(image.Metadata, format);
-            var encoder = ChooseEncoder(format);
+            var stream = image.Bitmap;
 
-            encoder.Frames.Add(BitmapFrame.Create(bitmap, bitmap.Thumbnail, metadata, bitmap.ColorContexts));
+            var bitmap = FreeImage.LoadFromStream(stream);
 
-            using (var interim = new MemoryStream())
+            foreach (var item in new ImageMetadata(bitmap, true).List)
             {
-                encoder.Save(interim);
-                interim.Seek(0, SeekOrigin.Begin);
-                return interim.CopyToAsync(writeStream);
-            }
-        }
-
-        private BitmapEncoder ChooseEncoder(string format)
-        {
-            var mapping = Global.mappingData.ToDictionary(row => row.MediaType, row => row.Formatter);
-
-            if (!mapping.TryGetValue(format, out Type encoderType))
-            {
-                var supportedFormats = string.Join(", ", mapping.Keys);
-                throw new NotSupportedException(string.Format("Supported formats are {0}.", supportedFormats));
+                item.DestoryModel();
             }
 
-            return Activator.CreateInstance(encoderType) as BitmapEncoder;
-        }
+            var xmpMetadata = image.Metadata;
+            var xmpString = XmpMetaFactory.SerializeToString(xmpMetadata, new SerializeOptions());
+            var xmp = new MDM_XMP(bitmap);
+            xmp.Xml = xmpString;
 
-        private BitmapMetadata ConvertMetadata(IXmpMeta xmp, string mime)
-        {
-            var mapping = Global.mappingData.Where(row => row.MetadataFormat != null).ToDictionary(row => row.MediaType, row => row.MetadataFormat);
-
-            if (!mapping.TryGetValue(mime, out string format))
-            {
-                return null;
-            }
-
-            var metadata = new BitmapMetadata(format);
-
-            if (mime == "image/png")
-            {
-                var xmpString = XmpMetaFactory.SerializeToString(xmp, new SerializeOptions());
-
-                metadata.SetQuery("/iTXt/Keyword", "XML:com.adobe.xmp".ToCharArray());
-                metadata.SetQuery("/iTXt/TextEntry", xmpString);
-            }
-            else
-            {
-                var root = "/xmp";
-
-                if (mime == "image/tiff")
-                {
-                    root = "/ifd/xmp";
-                }
-
-                foreach (var item in xmp.Properties)
-                {
-                    if (!item.Options.IsSchemaNode)
-                    {
-                        var qName = new QName(item.Path);
-
-                        metadata.SetQuery($"{root}/{{wstr={item.Namespace}}}:{qName.GetLocalName()}", item.Value);
-                    }
-                }
-            }
-
-            return metadata;
+            var mime = this.SupportedMediaTypes.Single().MediaType;
+            var format = FreeImage.GetFIFFromMime(mime);
+            return Task.Factory.StartNew(() => FreeImage.SaveToStream(bitmap, writeStream, format));//TODO: fails on tiff regardless of xmp.
         }
     }
 }

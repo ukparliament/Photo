@@ -71,6 +71,11 @@
             config.Services.Add(typeof(IExceptionLogger), new AIExceptionLogger());
 
             config.MessageHandlers.Add(new NotAcceptablePayloadHandler());
+            config.MessageHandlers.Add(new NotFoundPayloadHandler());
+
+            config.Formatters.Clear();
+            config.Formatters.Add(new HttpErrorJsonFormatter());
+            config.Formatters.Add(new HttpErrorXmlFormatter());
         }
     }
 }

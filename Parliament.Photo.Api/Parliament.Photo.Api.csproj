@@ -24,7 +24,8 @@
     </NuGetPackageImportStamp>
     <ApplicationInsightsResourceId>/subscriptions/7bd651a8-fab6-4449-b3d2-e0d86dd0fb13/resourcegroups/search-api2/providers/microsoft.insights/components/search-api</ApplicationInsightsResourceId>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -35,7 +36,8 @@
     <PublishDatabases>false</PublishDatabases>
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
@@ -123,13 +125,9 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\image2">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="Parameters.xml" />
-    <Content Include="Images\image1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Include="Parameters.xml">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Secrets.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -149,12 +147,14 @@
     <Compile Include="Controllers\Configuration\BadRequestControllerConfigurationAttribute.cs" />
     <Compile Include="Controllers\Configuration\DefaultMethodSelector.cs" />
     <Compile Include="Controllers\Configuration\ImageControllerConfigurationAttribute.cs" />
+    <Compile Include="HttpErrorXmlFormatter.cs" />
+    <Compile Include="HttpErrorJsonFormatter.cs" />
     <Compile Include="MappingData.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
     <Compile Include="Controllers\Configuration\MetadataControllerConfigurationAttribute.cs" />
+    <Compile Include="NotFoundPayloadHandler.cs" />
     <Compile Include="XmpFormatter.cs" />
-    <Compile Include="NoDefaultContentNegotiator.cs" />
     <Compile Include="ImageFormatter.cs" />
     <Compile Include="NotAcceptablePayloadHandler.cs" />
     <Compile Include="Controllers\ImageController.cs" />
@@ -189,6 +189,26 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\VVVV.FreeImage.3.15.1.1\build\net40\VVVV.FreeImage.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VVVV.FreeImage.3.15.1.1\build\net40\VVVV.FreeImage.targets'))" />
+  </Target>
+  <!-- <Import Project="..\packages\VVVV.FreeImage.3.15.1.1\build\net40\VVVV.FreeImage.targets" Condition="Exists('..\packages\VVVV.FreeImage.3.15.1.1\build\net40\VVVV.FreeImage.targets')" /> -->
+  <ItemGroup>
+    <Reference Include="FreeImageNET">
+      <HintPath>..\packages\VVVV.FreeImage.3.15.1.1\build\net40\lib\FreeImageNET.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <FreeImageBins Include="..\packages\VVVV.FreeImage.3.15.1.1\build\net40\freeimage\$(Platform)\*.dll" />
+    <None Include="@(FreeImageBins)">
+      <Link>%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
