@@ -1,11 +1,11 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
-    using System.Windows.Media.Imaging;
+    using System.IO;
     using XmpCore;
 
     public class Image
     {
-        public BitmapFrame Bitmap;
+        public Stream Bitmap;
         public IXmpMeta Metadata;
     }
 }

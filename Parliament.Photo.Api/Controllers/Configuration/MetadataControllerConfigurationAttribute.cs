@@ -8,7 +8,6 @@
     {
         public void Initialize(HttpControllerSettings controllerSettings, HttpControllerDescriptor controllerDescriptor)
         {
-            controllerSettings.Formatters.Clear();
             controllerSettings.Formatters.Add(new XmpFormatter(new UriPathExtensionMapping("xmp", "application/rdf+xml")));
         }
     }

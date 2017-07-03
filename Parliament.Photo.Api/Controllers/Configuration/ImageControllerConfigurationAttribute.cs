@@ -9,8 +9,7 @@
     {
         public void Initialize(HttpControllerSettings controllerSettings, HttpControllerDescriptor controllerDescriptor)
         {
-            controllerSettings.Services.Replace(typeof(IContentNegotiator), new NoDefaultContentNegotiator());
-            controllerSettings.Formatters.Clear();
+            controllerSettings.Services.Replace(typeof(IContentNegotiator), new DefaultContentNegotiator(true));
 
             var mappings =
                 // First add all the extension mappings.

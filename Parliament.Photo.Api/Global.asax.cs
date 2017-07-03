@@ -1,5 +1,6 @@
 ﻿namespace Parliament.Photo.Api
 {
+    using ImageMagick;
     using Microsoft.ApplicationInsights.Extensibility;
     using Parliament.Photo.Api.Controllers;
     using System;
@@ -8,7 +9,6 @@
     using System.Web;
     using System.Web.Http;
     using System.Web.Http.ExceptionHandling;
-    using System.Windows.Media.Imaging;
 
     public class Global : HttpApplication
     {
@@ -19,7 +19,7 @@
                         "png"
                     },
                     MetadataFormat = "png",
-                    Formatter = typeof(PngBitmapEncoder)
+                    Formatter = MagickFormat.Png
                 },
                 new MappingData {
                     MediaType = "image/jpeg",
@@ -29,7 +29,7 @@
                         "jpeg"
                     },
                     MetadataFormat = "jpg",
-                    Formatter = typeof(JpegBitmapEncoder)
+                    Formatter = MagickFormat.Jpg
                 },
                 new MappingData {
                     MediaType = "image/gif",
@@ -37,7 +37,7 @@
                         "gif"
                     },
                     MetadataFormat = "gif",
-                    Formatter = typeof(GifBitmapEncoder)
+                    Formatter = MagickFormat.Gif
                 },
                 new MappingData {
                     MediaType = "image/tiff",
@@ -46,14 +46,14 @@
                         "tiff"
                     },
                     MetadataFormat = "tiff",
-                    Formatter = typeof(TiffBitmapEncoder)
+                    Formatter = MagickFormat.Tif
                 },
                 new MappingData {
                     MediaType = "image/bmp",
                     Extensions = new[] {
                         "bmp"
                     },
-                    Formatter = typeof(BmpBitmapEncoder)
+                    Formatter = MagickFormat.Bmp
                 }
             };
 
