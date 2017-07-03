@@ -60,7 +60,7 @@
                     {
                         magick.Crop(100, 100, 300, 200);
                     }
-                    if (crop == "2")
+                    if (crop == "3")
                     {
                         magick.Crop(100, 100, 200, 300);
                     }

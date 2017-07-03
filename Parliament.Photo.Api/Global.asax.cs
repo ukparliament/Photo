@@ -6,8 +6,10 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Net.Http;
     using System.Web;
     using System.Web.Http;
+    using System.Web.Http.Dispatcher;
     using System.Web.Http.ExceptionHandling;
 
     public class Global : HttpApplication
@@ -63,15 +65,19 @@
 
             TelemetryConfiguration.Active.InstrumentationKey = ConfigurationManager.AppSettings["ApplicationInsightsInstrumentationKey"];
 
+            var imagePipeline = HttpClientFactory.CreatePipeline(
+                new HttpControllerDispatcher(config),
+                new DelegatingHandler[] {
+                    new NotAcceptablePayloadHandler(),
+                    new NotFoundPayloadHandler()
+            });
+
             config.Routes.MapHttpRoute("Metadata", "{id}.xmp", new { controller = "Metadata" });
-            config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" });
-            config.Routes.MapHttpRoute("ImageNoExtension", "{id}", new { controller = "Image" });
+            config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" }, null, imagePipeline);
+            config.Routes.MapHttpRoute("ImageNoExtension", "{id}", new { controller = "Image" }, null, imagePipeline);
             config.Routes.MapHttpRoute("CatchAllBadRequest", "{*uri}", new { controller = "BadRequest" });
 
             config.Services.Add(typeof(IExceptionLogger), new AIExceptionLogger());
-
-            config.MessageHandlers.Add(new NotAcceptablePayloadHandler());
-            config.MessageHandlers.Add(new NotFoundPayloadHandler());
 
             config.Formatters.Clear();
             config.Formatters.Add(new HttpErrorJsonFormatter());

@@ -6,7 +6,6 @@
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Web.Http.Routing;
 
     public class NotFoundPayloadHandler : DelegatingHandler
     {
@@ -18,7 +17,7 @@
             {
                 response = await this.SendDefaultImageRequestAsync(request, cancellationToken);
                 response.StatusCode = HttpStatusCode.NotFound;
-            };
+            }
 
             return response;
         }
@@ -32,14 +31,14 @@
 
         private static HttpRequestMessage Clone(HttpRequestMessage oldRequest)
         {
-            var defaultImageId = ConfigurationManager.AppSettings["defaultImageId"];
-            var defaultImageUri = new Uri(oldRequest.RequestUri, defaultImageId);
-            var newRequest = new HttpRequestMessage(HttpMethod.Get, defaultImageUri);
+            var notFoundImageId = ConfigurationManager.AppSettings["NotFoundImageId"];
+            var routeData = oldRequest.GetRouteData();
+            var oldImageId = routeData.Values["id"] as string;
+            routeData.Values["id"] = notFoundImageId;
 
-            var data = oldRequest.GetRouteData();
-            data.Values["id"] = defaultImageId;
-
-            newRequest.SetRouteData(data);
+            var newRequestUri = oldRequest.RequestUri.ToString().Replace(oldImageId, notFoundImageId);
+            var newRequest = new HttpRequestMessage(HttpMethod.Get, new Uri(newRequestUri));
+            newRequest.SetRouteData(routeData);
 
             NotFoundPayloadHandler.CloneHeaders(oldRequest, newRequest);
 
