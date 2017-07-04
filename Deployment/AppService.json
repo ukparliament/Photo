@@ -140,7 +140,7 @@
           ],
           "properties": {
             "PhotoStorage": {
-              "value": "parameters('photoStorageAccountEndpoint')",
+              "value": "[parameters('photoStorageAccountEndpoint')]",
               "type": "Custom"
             }
           }
