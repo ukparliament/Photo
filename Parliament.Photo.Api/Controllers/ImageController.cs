@@ -9,31 +9,37 @@
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Threading.Tasks;
     using System.Web.Http;
 
     [ImageControllerConfiguration]
     public class ImageController : ApiController
     {
-        public HttpResponseMessage Get(string id, int? width = null, int? height = null, string crop = null, bool? download = null)
+        public async Task<HttpResponseMessage> Get(string id, int? width = null, int? height = null, string crop = null, bool? download = null)
         {
             var blob = ImageController.GetRawSource(id);
-
-            if (!blob.Exists())
+            var exists = await blob.ExistsAsync();
+            if (!exists)
             {
                 return this.Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            var stream = blob.OpenRead();
+            var stream = await blob.OpenReadAsync();
+            this.Request.RegisterForDispose(stream);
 
             if (width != null || height != null || crop != null)
             {
                 stream = ResizeAndCrop(stream, width, height, crop);
+                this.Request.RegisterForDispose(stream);
             }
+
+            var metadataController = new MetadataController();
+            this.Request.RegisterForDispose(metadataController);
 
             var image = new Image
             {
                 Bitmap = stream,
-                Metadata = new MetadataController().Get(id)
+                Metadata = metadataController.Get(id)
             };
 
             var response = this.Request.CreateResponse(image);
@@ -42,6 +48,9 @@
             {
                 MakeDownload(id, response);
             }
+
+            var etag = string.Format("\"{0}\"", string.Join("|", id, width, height, crop, download).GetHashCode());
+            response.Headers.ETag = new EntityTagHeaderValue(etag);
 
             return response;
         }
@@ -52,29 +61,36 @@
             {
                 if (crop != null)
                 {
-                    if (crop == "1")
+                    var x = 1800;
+                    var y = 1000;
+                    if (crop == "MCU_3:2")
                     {
-                        magick.Crop(100, 100, 100, 100);
+                        magick.Crop(x - 1553, y - 789, 3108, 2072);
                     }
-                    if (crop == "2")
+                    if (crop == "MCU_3:4")
                     {
-                        magick.Crop(100, 100, 300, 200);
+                        magick.Crop(x - 789, y - 789, 1554, 2072);
                     }
-                    if (crop == "3")
+                    if (crop == "CU_1:1")
                     {
-                        magick.Crop(100, 100, 200, 300);
+                        magick.Crop(x - 789, y - 789, 1554, 1554);
+                    }
+                    if (crop == "CU_5:2")
+                    {
+                        magick.Crop(1, y - 670, 3795, 1518);
                     }
                 }
 
                 if (width != null || height != null)
                 {
                     var size = new MagickGeometry(width.GetValueOrDefault(), height.GetValueOrDefault());
-                    magick.Resize(size);
+                    magick.ColorSpace = ColorSpace.RGB;
+                    magick.Scale(size);
+                    magick.ColorSpace = ColorSpace.sRGB;
                 }
 
                 var interim = new MemoryStream();
                 magick.Write(interim);
-                stream.Dispose();
 
                 return interim;
             }
