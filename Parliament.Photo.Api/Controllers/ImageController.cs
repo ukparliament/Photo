@@ -98,7 +98,7 @@
 
         private static CloudBlob GetRawSource(string id)
         {
-            var connectionString = ConfigurationManager.AppSettings["PhotoStorage"];
+            var connectionString = ConfigurationManager.ConnectionStrings["PhotoStorage"].ConnectionString;
             var account = CloudStorageAccount.Parse(connectionString);
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference("photo");
