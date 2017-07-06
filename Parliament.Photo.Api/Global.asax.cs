@@ -16,46 +16,34 @@
     {
         public static readonly IEnumerable<MappingData> mappingData = new MappingData[] {
                 new MappingData {
-                    MediaType = "image/png",
-                    Extensions = new[] {
-                        "png"
-                    },
-                    MetadataFormat = "png",
-                    Formatter = MagickFormat.Png
-                },
-                new MappingData {
                     MediaType = "image/jpeg",
                     Extensions = new[] {
                         "jpg",
                         "jpe",
                         "jpeg"
                     },
-                    MetadataFormat = "jpg",
                     Formatter = MagickFormat.Jpg
+                },
+                new MappingData {
+                    MediaType = "image/png",
+                    Extensions = new[] {
+                        "png"
+                    },
+                    Formatter = MagickFormat.Png
+                },
+                new MappingData {
+                    MediaType = "image/webp",
+                    Extensions = new[] {
+                        "webp"
+                    },
+                    Formatter = MagickFormat.WebP
                 },
                 new MappingData {
                     MediaType = "image/gif",
                     Extensions = new[] {
                         "gif"
                     },
-                    MetadataFormat = "gif",
                     Formatter = MagickFormat.Gif
-                },
-                new MappingData {
-                    MediaType = "image/tiff",
-                    Extensions = new[] {
-                        "tif",
-                        "tiff"
-                    },
-                    MetadataFormat = "tiff",
-                    Formatter = MagickFormat.Tif
-                },
-                new MappingData {
-                    MediaType = "image/bmp",
-                    Extensions = new[] {
-                        "bmp"
-                    },
-                    Formatter = MagickFormat.Bmp
                 }
             };
 
