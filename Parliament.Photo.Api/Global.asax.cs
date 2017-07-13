@@ -56,7 +56,7 @@
             var imagePipeline = HttpClientFactory.CreatePipeline(
                 new HttpControllerDispatcher(config),
                 new DelegatingHandler[] {
-                    new NotAcceptablePayloadHandler(),
+                    new NotAcceptablePayloadHandler(typeof(MagickImage)),
                     new NotFoundPayloadHandler()
             });
 

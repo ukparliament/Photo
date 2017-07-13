@@ -1,5 +1,6 @@
 ﻿namespace Parliament.Photo.Api
 {
+    using System;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -8,6 +9,13 @@
 
     public class NotAcceptablePayloadHandler : DelegatingHandler
     {
+        private readonly Type contentType;
+
+        public NotAcceptablePayloadHandler(Type contentType)
+        {
+            this.contentType = contentType;
+        }
+
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Let the framework do its job.
@@ -20,6 +28,7 @@
                 var mediaTypes = request
                     .GetConfiguration()
                     .Formatters
+                    .Where(mediaFormatter => mediaFormatter.CanWriteType(this.contentType))
                     .SelectMany(mediaFormatter => mediaFormatter.SupportedMediaTypes)
                     .Select(mediaType => mediaType.MediaType)
                     .Distinct();
