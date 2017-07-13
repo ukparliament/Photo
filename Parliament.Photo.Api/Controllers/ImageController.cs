@@ -28,17 +28,7 @@
             Crop(image, 1800, 1000, crop);
             Resize(image, width, height);
             AddMetadata(id, image);
-
-            if (quality != null)
-            {
-                image.Quality = quality.Value;
-
-                telemetry.TrackEvent(
-                    "Resized",
-                        metrics: new Dictionary<string, double> {
-                        { "quality", (long)quality }
-                    });
-            }
+            Quality(quality, image);
 
             var response = Request.CreateResponse(image);
 
@@ -47,16 +37,40 @@
             return response;
         }
 
+        private void Quality(int? quality, MagickImage image)
+        {
+            if (quality != null)
+            {
+                image.Quality = quality.Value;
+
+                telemetry.TrackEvent(
+                    "Quality",
+                        metrics: new Dictionary<string, double> {
+                        { "quality", (long)quality }
+                    });
+            }
+        }
+
         private async Task<MagickImage> GetImage(string id)
         {
-            var blob = await GetRawSource(id);
+            var blob = GetRawSource(id);
 
-            using (var stream = await blob.OpenReadAsync())
+            try
             {
-                var magick = new MagickImage(stream);
-                this.Request.RegisterForDispose(magick);
+                using (var stream = await blob.OpenReadAsync())
+                {
+                    var magick = new MagickImage(stream);
 
-                return magick;
+                    telemetry.TrackEvent("Loaded");
+
+                    this.Request.RegisterForDispose(magick);
+
+                    return magick;
+                }
+            }
+            catch (StorageException e) when (e.Message.Contains("404"))
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
             }
         }
 
@@ -91,11 +105,11 @@
                 case null:
                     return;
 
-                case "MCU_3:4":
+                case "MCU_3:2":
                     magick.Crop(x - 1553, y - 789, 3108, 2072);
                     break;
 
-                case "MCU_3:2":
+                case "MCU_3:4":
                     magick.Crop(x - 789, y - 789, 1554, 2072);
                     break;
 
@@ -116,7 +130,7 @@
             }
 
             telemetry.TrackEvent(
-                "Cropped",
+                "Crop",
                 new Dictionary<string, string> {
                     { "crop", crop }
                 },
@@ -137,7 +151,7 @@
                 magick.AddProfile(xmpProfile);
             }
 
-            telemetry.TrackEvent("Added metadata");
+            telemetry.TrackEvent("Metadata");
         }
 
         private void Download(string id, bool? download, HttpResponseMessage response)
@@ -158,18 +172,13 @@
             }
         }
 
-        private async static Task<CloudBlob> GetRawSource(string id)
+        private static CloudBlob GetRawSource(string id)
         {
             var connectionString = ConfigurationManager.ConnectionStrings["PhotoStorage"].ConnectionString;
             var account = CloudStorageAccount.Parse(connectionString);
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference("photo");
             var blob = container.GetBlobReference(id);
-
-            if (!await blob.ExistsAsync())
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
 
             return blob;
         }

@@ -1,6 +1,9 @@
 ﻿namespace Parliament.Photo.Api
 {
     using ImageMagick;
+    using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.DataContracts;
+    using Microsoft.ApplicationInsights.Web;
     using System;
     using System.IO;
     using System.Linq;
@@ -35,14 +38,32 @@
         public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
             var magick = value as MagickImage;
-            var encoder = ChooseEncoder();
+            var format = this.SupportedMediaTypes.Single().MediaType;
+            var encoder = ImageFormatter.ChooseEncoder(format);
+            var telemetryClient = ImageFormatter.InitializeTelemetryClient(format, out EventTelemetry eventTelemetry);
 
-            return Task.Factory.StartNew(() => magick.Write(writeStream, encoder));
+            return Task.Factory.StartNew(() =>
+            {
+                magick.Write(writeStream, encoder);
+
+                telemetryClient.TrackEvent(eventTelemetry);
+            });
         }
 
-        private MagickFormat ChooseEncoder()
+        private static TelemetryClient InitializeTelemetryClient(string format, out EventTelemetry telemetry)
         {
-            var format = this.SupportedMediaTypes.Single().MediaType;
+            telemetry = new EventTelemetry("Write");
+            telemetry.Properties.Add("format", format);
+
+            // This makes the event part of the overall request context.
+            var initializer = new OperationCorrelationTelemetryInitializer();
+            initializer.Initialize(telemetry);
+
+            return new TelemetryClient();
+        }
+
+        private static MagickFormat ChooseEncoder(string format)
+        {
             var mapping = Global.mappingData.ToDictionary(row => row.MediaType, row => row.Formatter);
 
             if (!mapping.TryGetValue(format, out MagickFormat encoderType))
