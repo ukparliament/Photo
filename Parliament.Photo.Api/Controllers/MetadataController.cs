@@ -1,5 +1,6 @@
 ﻿namespace Parliament.Photo.Api.Controllers
 {
+    using System;
     using System.Web.Http;
     using XmpCore;
     using XmpCore.Options;
@@ -9,10 +10,19 @@
     {
         public IXmpMeta Get(string id)
         {
+            return null;
+        }
+
+        public IXmpMeta Get(string id, Uri member, string givenName, string familyName)
+        {
             var xmp = XmpMetaFactory.Create();
 
-            XmpMetaFactory.SchemaRegistry.RegisterNamespace("http://id.parliament.uk/", "id");
-            XmpMetaFactory.SchemaRegistry.RegisterNamespace("http://id.parliament.uk/schema/", "schema");
+            // TODO: Change to proper namespace
+            var idNs = "http://id.ukpds.org/";
+            var schemaNs = $"{idNs}schema/";
+
+            XmpMetaFactory.SchemaRegistry.RegisterNamespace(idNs, "id");
+            XmpMetaFactory.SchemaRegistry.RegisterNamespace(schemaNs, "schema");
 
             xmp.SetProperty(XmpConstants.NsIptccore, "CiAdrCity", "London");
             xmp.SetProperty(XmpConstants.NsIptccore, "CiAdrCtry", "UK");
@@ -26,20 +36,20 @@
             xmp.SetPropertyDate(XmpConstants.NsPhotoshop, "DateCreated", XmpDateTimeFactory.Create(2017, 6, 17, 11, 30, 41, 0));
 
             xmp.SetProperty(XmpConstants.NsDC, "rights", "Attribution 3.0 Unported (CC BY 3.0)");
-            xmp.SetProperty(XmpConstants.NsDC, "title", ":firsNtame :lastName");
-            xmp.SetProperty(XmpConstants.NsDC, "description", ":firstName :lastName - UK Parliament official portraits 2017");
+            xmp.SetProperty(XmpConstants.NsDC, "title", $"{givenName} {familyName}");
+            xmp.SetProperty(XmpConstants.NsDC, "description", $"{givenName} {familyName} - UK Parliament official portraits 2017");
 
             // <rdf:Description rdf:about="http://id.parliament.uk/IMAGE1" />
-            xmp.SetObjectName("http://id.parliament.uk/IMAGE1");
+            xmp.SetObjectName($"{idNs}{id}");
 
             // id:IMAGE1 a schema:Image
-            xmp.SetProperty(XmpConstants.NsRdf, "type", "http://id.parliament.uk/schema/Image", new PropertyOptions { IsUri = true });
+            xmp.SetProperty(XmpConstants.NsRdf, "type", $"{schemaNs}Image", new PropertyOptions { IsUri = true });
 
             // id:IMAGE1 schema:parlHasSubject id:PERSON1
-            xmp.SetProperty("http://id.parliament.uk/schema/", "imageHasSubject", "http://id.parliament.uk/PERSON1", new PropertyOptions { IsUri = true });
+            xmp.SetProperty(schemaNs, "imageHasSubject", member, new PropertyOptions { IsUri = true });
 
             // id:PERSON1 a schema:Person
-            xmp.SetQualifier("http://id.parliament.uk/schema/", "imageHasSubject", XmpConstants.NsRdf, "type", "http://id.parliament.uk/schema/Person", new PropertyOptions { IsUri = true });
+            xmp.SetQualifier(schemaNs, "imageHasSubject", XmpConstants.NsRdf, "type", $"{schemaNs}Person", new PropertyOptions { IsUri = true });
 
             return xmp;
         }

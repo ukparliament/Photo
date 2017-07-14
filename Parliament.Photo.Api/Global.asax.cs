@@ -60,6 +60,7 @@
                     new NotFoundPayloadHandler()
             });
 
+            config.Routes.MapHttpRoute("Favicon", "favicon.ico", new { controller = "BadRequest" });
             config.Routes.MapHttpRoute("Metadata", "{id}.xmp", new { controller = "Metadata" });
             config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" }, null, imagePipeline);
             config.Routes.MapHttpRoute("ImageNoExtension", "{id}", new { controller = "Image" }, null, imagePipeline);

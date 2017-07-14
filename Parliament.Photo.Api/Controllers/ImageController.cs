@@ -4,6 +4,7 @@
     using Microsoft.ApplicationInsights;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Blob;
+    using System;
     using System.Collections.Generic;
     using System.Configuration;
     using System.Linq;
@@ -12,6 +13,9 @@
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using System.Web.Http;
+    using VDS.RDF;
+    using VDS.RDF.Query;
+    using VDS.RDF.Storage;
     using XmpCore;
     using XmpCore.Options;
 
@@ -23,11 +27,13 @@
         /// <param name="quality"><seealso cref="https://www.imagemagick.org/script/command-line-options.php#quality"/></param>
         public async Task<HttpResponseMessage> Get(string id, int? width = null, int? height = null, string crop = null, bool? download = null, int? quality = null)
         {
+            Query(id, out Uri member, out string givenName, out string familyName, out int x, out int y);
+
             var image = await GetImage(id);
 
-            Crop(image, 1800, 1000, crop);
+            Crop(image, x, y, crop);
             Resize(image, width, height);
-            AddMetadata(id, image);
+            AddMetadata(id, image, member, givenName, familyName);
             Quality(quality, image);
 
             var response = Request.CreateResponse(image);
@@ -35,6 +41,57 @@
             Download(id, download, response);
 
             return response;
+        }
+
+        private static void Query(string id, out Uri member, out string givenName, out string familyName, out int x, out int y)
+        {
+            var queryString = @"
+PREFIX :<http://id.ukpds.org/schema/>
+
+SELECT ?member ?givenName ?familyName ?x ?y
+WHERE {
+    BIND (@id AS ?image)
+
+    ?image
+        :memberImageHasMember ?member ;
+        :personImageFaceCentrePoint ?point .
+    ?member
+        :personGivenName ?givenName ;
+        :personFamilyName ?familyName .
+
+    BIND(STRBEFORE(STRAFTER(STR(?point), ""(""), "" "") AS ?x)
+    BIND(STRBEFORE(STRAFTER(STR(?point), "" ""), "")"") AS ?y)
+}
+";
+
+            var query = new SparqlParameterizedString(queryString);
+
+            var idUri = new Uri("http://id.ukpds.org/");
+            var imageUri = new Uri(idUri, id);
+
+            query.SetUri("id", imageUri);
+
+            var endpointString = ConfigurationManager.ConnectionStrings["SparqlEndpoint"].ConnectionString;
+            var endpoint = new Uri(endpointString);
+
+            using (var connector = new SparqlConnector(endpoint))
+            {
+                using (var results = connector.Query(query.ToString()) as SparqlResultSet)
+                {
+                    var result = results.SingleOrDefault();
+
+                    if (result == null)
+                    {
+                        throw new HttpResponseException(HttpStatusCode.NotFound);
+                    }
+
+                    member = new Uri((result["member"] as ILiteralNode).Value);
+                    givenName = (result["givenName"] as ILiteralNode).Value;
+                    familyName = (result["familyName"] as ILiteralNode).Value;
+                    x = int.Parse((result["x"] as ILiteralNode).Value);
+                    y = int.Parse((result["y"] as ILiteralNode).Value);
+                }
+            }
         }
 
         private void Quality(int? quality, MagickImage image)
@@ -140,11 +197,11 @@
                 });
         }
 
-        private void AddMetadata(string id, MagickImage magick)
+        private void AddMetadata(string id, MagickImage magick, Uri member, string givenName, string familyName)
         {
             using (var metadataController = new MetadataController())
             {
-                var xmp = metadataController.Get(id);
+                var xmp = metadataController.Get(id, member, givenName, familyName);
                 var xmpBuffer = XmpMetaFactory.SerializeToBuffer(xmp, new SerializeOptions());
                 var xmpProfile = new XmpProfile(xmpBuffer);
 
