@@ -32,6 +32,12 @@
         "description": "Name of the storage account to store photos."
       }
     },
+    "sparqlEndpoint": {
+      "type": "string",
+      "metadata": {
+        "description": "Uri of the SPARQL Endpoint."
+      }
+    },
     "photoNotFoundImageId": {
       "type": "string",
       "metadata": {
@@ -141,6 +147,10 @@
           "properties": {
             "PhotoStorage": {
               "value": "[parameters('photoStorageAccountEndpoint')]",
+              "type": "Custom"
+            },
+            "SparqlEndpoint": {
+              "value": "[parameters('sparqlEndpoint')]",
               "type": "Custom"
             }
           }
