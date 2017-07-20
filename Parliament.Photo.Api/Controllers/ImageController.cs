@@ -171,7 +171,7 @@ WHERE {
                     break;
 
                 case "CU_1:1":
-                    magick.Crop(x - 789, y - 789, 1554, 1554);
+                    magick.Crop(x - 789, y - 706, 1554, 1554);
                     break;
 
                 case "CU_5:2":
