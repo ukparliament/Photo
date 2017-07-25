@@ -32,19 +32,36 @@
 
         public override bool CanWriteType(Type type)
         {
-            return typeof(MagickImage).IsAssignableFrom(type);
+            return typeof(CachedImage).IsAssignableFrom(type);
         }
 
         public override Task WriteToStreamAsync(Type type, object value, Stream writeStream, HttpContent content, TransportContext transportContext)
         {
-            var magick = value as MagickImage;
+            var cachedImage = value as CachedImage;
+            var magick = cachedImage.Image;
+            var blob = cachedImage.CacheBlob;
             var format = this.SupportedMediaTypes.Single().MediaType;
-            var encoder = ImageFormatter.ChooseEncoder(format);
             var telemetryClient = ImageFormatter.InitializeTelemetryClient(format, out EventTelemetry eventTelemetry);
 
             return Task.Factory.StartNew(() =>
             {
-                magick.Write(writeStream, encoder);
+                if (magick != null)
+                {
+                    var encoder = ImageFormatter.ChooseEncoder(format);
+                    using (var cacheStream = blob.OpenWrite())
+                    {
+                        magick.Write(cacheStream, encoder);
+                    }
+
+                    magick.Write(writeStream, encoder);
+                }
+                else
+                {
+                    using (var cacheStream = blob.OpenRead())
+                    {
+                        cacheStream.CopyTo(writeStream);
+                    }
+                }
 
                 telemetryClient.TrackEvent(eventTelemetry);
             });

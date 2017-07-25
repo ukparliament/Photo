@@ -12,6 +12,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using System.Web;
     using System.Web.Http;
     using VDS.RDF;
     using VDS.RDF.Query;
@@ -29,18 +30,49 @@
         {
             Query(id, out Uri member, out string givenName, out string familyName, out int x, out int y);
 
-            var image = await GetImage(id);
+            var cachedImage = new CachedImage();
 
-            Crop(image, x, y, crop);
-            Resize(image, width, height);
-            AddMetadata(id, image, member, givenName, familyName);
-            Quality(quality, image);
+            var response = CreateResponse(id, width, height, crop, quality, cachedImage);
 
-            var response = Request.CreateResponse(image);
+            if (!await cachedImage.CacheBlob.ExistsAsync())
+            {
+                var image = await GetImage(id);
+
+                Crop(image, x, y, crop);
+                Resize(image, width, height);
+                AddMetadata(id, image, member, givenName, familyName);
+                Quality(quality, image);
+
+                cachedImage.Image = image;
+            }
 
             Download(id, download, response);
 
             return response;
+        }
+
+        private HttpResponseMessage CreateResponse(string id, int? width, int? height, string crop, int? quality, CachedImage cachedImage)
+        {
+            var response = Request.CreateResponse(cachedImage);
+            var content = response.Content as ObjectContent<CachedImage>;
+            var formatter = content.Formatter as ImageFormatter;
+            var mimeType = HttpUtility.UrlEncode(formatter.SupportedMediaTypes.Single().ToString());
+
+            var key = $"{id}/{mimeType}/crop_{crop}/dimensions_{width}x{height}/quality-{quality}";
+
+            cachedImage.CacheBlob = FindCacheBlob(key);
+
+            return response;
+        }
+
+        private static CloudBlockBlob FindCacheBlob(string key)
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["Cache"].ConnectionString;
+            var account = CloudStorageAccount.Parse(connectionString);
+            var client = account.CreateCloudBlobClient();
+            var container = client.GetContainerReference("cache");
+
+            return container.GetBlockBlobReference(key);
         }
 
         private static void Query(string id, out Uri member, out string givenName, out string familyName, out int x, out int y)
