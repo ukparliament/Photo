@@ -29,13 +29,19 @@
     "photoStorageAccountEndpoint": {
       "type": "string",
       "metadata": {
-        "description": "Name of the storage account to store photos."
+        "description": "Connection string for photo Azure Storage (should be r/o SAS)."
       }
     },
     "sparqlEndpoint": {
       "type": "string",
       "metadata": {
         "description": "Uri of the SPARQL Endpoint."
+      }
+    },
+    "photoCache": {
+      "type": "string",
+      "metadata": {
+        "description": "Connection string for cache Azure Storage (should be r/w SAS)."
       }
     },
     "photoNotFoundImageId": {
@@ -151,6 +157,10 @@
             },
             "SparqlEndpoint": {
               "value": "[parameters('sparqlEndpoint')]",
+              "type": "Custom"
+            },
+            "PhotoCache": {
+              "value": "[parameters('photoCache')]",
               "type": "Custom"
             }
           }

@@ -28,14 +28,14 @@
         /// <param name="quality"><seealso cref="https://www.imagemagick.org/script/command-line-options.php#quality"/></param>
         public async Task<HttpResponseMessage> Get(string id, int? width = null, int? height = null, string crop = null, bool? download = null, int? quality = null)
         {
-            Query(id, out Uri member, out string givenName, out string familyName, out int x, out int y);
-
             var cachedImage = new CachedImage();
 
             var response = CreateResponse(id, width, height, crop, quality, cachedImage);
 
             if (!await cachedImage.CacheBlob.ExistsAsync())
             {
+                Query(id, out Uri member, out string givenName, out string familyName, out int x, out int y);
+
                 var image = await GetImage(id);
 
                 Crop(image, x, y, crop);
@@ -67,7 +67,7 @@
 
         private static CloudBlockBlob FindCacheBlob(string key)
         {
-            var connectionString = ConfigurationManager.ConnectionStrings["Cache"].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings["PhotoCache"].ConnectionString;
             var account = CloudStorageAccount.Parse(connectionString);
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference("cache");
