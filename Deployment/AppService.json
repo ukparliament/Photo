@@ -51,7 +51,7 @@
       }
     },
     "subscriptionKeyPhoto": {
-      "type": "securestring",
+      "type": "string",
       "metadata": {
         "description": "Subscription key for API Management Graph sparql endpoint."
       }
