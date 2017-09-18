@@ -44,7 +44,7 @@
         "description": "Name of the API Managment."
       }
     },
-    "apiPrefixUrl": {
+    "apiPrefix": {
       "type": "string",
       "metadata": {
         "description": "Url segment of API for additional deployments."
@@ -154,7 +154,7 @@
               "type": "Custom"
             },
             "SparqlEndpoint": {
-              "value": "[concat('https://',parameters('apiManagementName'),'.azure-api.net/',parameters('apiPrefixUrl'),'/sparql-endpoint/master?subscription-key=',parameters('subscriptionKeyPhoto'))]",
+              "value": "[concat('https://',parameters('apiManagementName'),'.azure-api.net/',parameters('apiPrefix'),'/sparql-endpoint/master?subscription-key=',parameters('subscriptionKeyPhoto'))]",
               "type": "Custom"
             },
             "PhotoCache": {
