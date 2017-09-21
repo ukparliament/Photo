@@ -38,24 +38,6 @@
         "description": "Connection string for cache Azure Storage (should be r/w SAS)."
       }
     },
-    "apiManagementName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the API Managment."
-      }
-    },
-    "apiPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Url segment of API for additional deployments."
-      }
-    },
-    "subscriptionKeyPhoto": {
-      "type": "string",
-      "metadata": {
-        "description": "Subscription key for API Management Graph sparql endpoint."
-      }
-    },
     "photoNotFoundImageId": {
       "type": "string",
       "metadata": {
@@ -154,7 +136,7 @@
               "type": "Custom"
             },
             "SparqlEndpoint": {
-              "value": "[concat('https://',parameters('apiManagementName'),'.azure-api.net/',parameters('apiPrefix'),'/sparql-endpoint/master?subscription-key=',parameters('subscriptionKeyPhoto'))]",
+              "value": "",
               "type": "Custom"
             },
             "PhotoCache": {

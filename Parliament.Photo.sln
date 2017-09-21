@@ -1,14 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parliament.Photo.Api", "Parliament.Photo.Api\Parliament.Photo.Api.csproj", "{CD0C5FFE-29B5-4FCE-BD3B-E8216C95BB64}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", "{B61E3E62-01AD-4CEB-AE0B-FC710E1ABFFF}"
 	ProjectSection(SolutionItems) = preProject
-		Deployment\ApplicationSettingsRetrieval.ps1 = Deployment\ApplicationSettingsRetrieval.ps1
+		Deployment\ApplicationSettingRetrieval.ps1 = Deployment\ApplicationSettingRetrieval.ps1
 		Deployment\AppService.json = Deployment\AppService.json
+		Deployment\PhotoAPISettings.ps1 = Deployment\PhotoAPISettings.ps1
 	EndProjectSection
 EndProject
 Global
@@ -24,5 +25,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C917560-0A4A-4F71-A0C4-1F5272FA6471}
 	EndGlobalSection
 EndGlobal
