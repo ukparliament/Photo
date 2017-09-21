@@ -38,6 +38,8 @@ foreach($set in $webAppSettings){
     $settings[$set.Name]=$set.Value
 }
 
-"https://$APIManagementName.azure-api.net/$APIPrefix/sparql-endpoint/master?subscription-key=$subscription.PrimaryKey"
+Log "Sets new data connection"
+$settings["Data"]="https://$APIManagementName.azure-api.net/$APIPrefix/sparql-endpoint/master?subscription-key=$subscription.PrimaryKey"
+Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $FixedQueryName -AppSettings $settings
 
 Log "Job well done!"
