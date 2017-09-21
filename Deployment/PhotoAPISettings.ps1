@@ -31,7 +31,7 @@ $apiProduct=Get-AzureRmApiManagementProduct -Context $management -Title "$APIPre
 $subscription=Get-AzureRmApiManagementSubscription -Context $management -ProductId $apiProduct.ProductId
 
 Log "Gets current settings"
-$webApp = Get-AzureRmwebApp -ResourceGroupName $APIResourceGroupName -Name $FixedQueryName
+$webApp = Get-AzureRmwebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName
 $webAppSettings = $webApp.SiteConfig.AppSettings
 $settings=@{}
 foreach($set in $webAppSettings){ 
@@ -40,6 +40,6 @@ foreach($set in $webAppSettings){
 
 Log "Sets new data connection"
 $settings["Data"]="https://$APIManagementName.azure-api.net/$APIPrefix/sparql-endpoint/master?subscription-key=$subscription.PrimaryKey"
-Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $FixedQueryName -AppSettings $settings
+Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -AppSettings $settings
 
 Log "Job well done!"
