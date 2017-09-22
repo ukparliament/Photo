@@ -32,14 +32,18 @@ $subscription=Get-AzureRmApiManagementSubscription -Context $management -Product
 
 Log "Gets current settings"
 $webApp = Get-AzureRmwebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName
-$webAppSettings = $webApp.SiteConfig.ConnectionStrings
-$settings=@{}
-foreach($set in $webAppSettings){ 
-    $settings[$set.Name]=$set.Value
+$connectionStrings=$webApp.SiteConfig.ConnectionStrings
+
+$connections = @{}
+foreach($connection in $connectionStrings){
+	if ($connection.Name -ne "SparqlEndpoint") {
+		$connections[$connection.Name]=@{Type=if ($connection.Type -eq $null){"Custom"}else{$connection.Type.ToString()};Value=$connection.ConnectionString}
+	}
 }
 
 Log "Sets new data connection"
-$settings["SparqlEndpoint"]="https://$APIManagementName.azure-api.net/$APIPrefix/sparql-endpoint/master?subscription-key=$($subscription.PrimaryKey)"
-Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -ConnectionStrings $settings
+$connections["SparqlEndpoint"]=@{Type="Custom";Value="https://$APIManagementName.azure-api.net/$APIPrefix/sparql-endpoint/master?subscription-key=$($subscription.PrimaryKey)"}
+
+Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -ConnectionStrings $connections
 
 Log "Job well done!"
