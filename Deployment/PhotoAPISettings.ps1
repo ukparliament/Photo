@@ -32,7 +32,7 @@ $subscription=Get-AzureRmApiManagementSubscription -Context $management -Product
 
 Log "Gets current settings"
 $webApp = Get-AzureRmwebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName
-$webAppSettings = $webApp.SiteConfig.AppSettings
+$webAppSettings = $webApp.SiteConfig.ConnectionStrings
 $settings=@{}
 foreach($set in $webAppSettings){ 
     $settings[$set.Name]=$set.Value
