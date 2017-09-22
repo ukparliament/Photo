@@ -40,6 +40,6 @@ foreach($set in $webAppSettings){
 
 Log "Sets new data connection"
 $settings["SparqlEndpoint"]="https://$APIManagementName.azure-api.net/$APIPrefix/sparql-endpoint/master?subscription-key=$($subscription.PrimaryKey)"
-Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -AppSettings $settings
+Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -ConnectionStrings $settings
 
 Log "Job well done!"
