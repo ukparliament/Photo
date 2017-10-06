@@ -44,6 +44,12 @@
         "description": "Id of the default image."
       }
     },
+    "apiManagementIP": {
+      "type": "string",
+      "metadata": {
+        "description": "IP address of the API Management."
+      }
+    },
     "releaseId": {
       "type": "int",
       "metadata": {
@@ -83,6 +89,13 @@
         "ReleaseId": "[parameters('releaseId')]"
       },
       "properties": {
+        "siteConfig": {
+          "ipSecurityRestrictions": [
+            {
+              "ipAddress": "[parameters('apiManagementIP')]"
+            }
+          ]
+        },
         "name": "[parameters('photoAPIName')]",
         "hostNames": [
           "[concat(parameters('photoAPIName'),'.azurewebsites.net')]"
