@@ -18,7 +18,7 @@
             var xmp = XmpMetaFactory.Create();
 
             // TODO: Change to proper namespace
-            var idNs = "http://id.ukpds.org/";
+            var idNs = "https://id.parliament.uk/";
             var schemaNs = $"{idNs}schema/";
 
             XmpMetaFactory.SchemaRegistry.RegisterNamespace(idNs, "id");

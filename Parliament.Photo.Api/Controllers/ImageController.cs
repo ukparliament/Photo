@@ -7,6 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
@@ -15,8 +16,8 @@
     using System.Web;
     using System.Web.Http;
     using VDS.RDF;
+    using VDS.RDF.Parsing;
     using VDS.RDF.Query;
-    using VDS.RDF.Storage;
     using XmpCore;
     using XmpCore.Options;
 
@@ -77,51 +78,35 @@
 
         private static void Query(string id, out Uri member, out string givenName, out string familyName, out int x, out int y)
         {
-            var queryString = @"
-PREFIX :<http://id.ukpds.org/schema/>
+            var endpointString = ConfigurationManager.ConnectionStrings["FixedQuery"].ConnectionString;
+            var endpoint = new Uri(string.Format("{0}photo_details?photo_id={1}", endpointString, id));
 
-SELECT ?member ?givenName ?familyName ?x ?y
-WHERE {
-    BIND (@id AS ?image)
-
-    ?image
-        :memberImageHasMember ?member ;
-        :personImageFaceCentrePoint ?point .
-    ?member
-        :personGivenName ?givenName ;
-        :personFamilyName ?familyName .
-
-    BIND(STRBEFORE(STRAFTER(STR(?point), ""(""), "" "") AS ?x)
-    BIND(STRBEFORE(STRAFTER(STR(?point), "" ""), "")"") AS ?y)
-}
-";
-
-            var query = new SparqlParameterizedString(queryString);
-
-            var idUri = new Uri("http://id.ukpds.org/");
-            var imageUri = new Uri(idUri, id);
-
-            query.SetUri("id", imageUri);
-
-            var endpointString = ConfigurationManager.ConnectionStrings["SparqlEndpoint"].ConnectionString;
-            var endpoint = new Uri(endpointString);
-
-            using (var connector = new SparqlConnector(endpoint))
+            using (var client = new HttpClient())
             {
-                using (var results = connector.Query(query.ToString()) as SparqlResultSet)
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/csv"));
+
+                using (var stream = client.GetStreamAsync(endpoint).Result)
                 {
-                    var result = results.SingleOrDefault();
-
-                    if (result == null)
+                    using (var reader = new StreamReader(stream))
                     {
-                        throw new HttpResponseException(HttpStatusCode.NotFound);
-                    }
+                        using (var results = new SparqlResultSet())
+                        {
+                            new SparqlCsvParser().Load(results, reader);
 
-                    member = new Uri((result["member"] as ILiteralNode).Value);
-                    givenName = (result["givenName"] as ILiteralNode).Value;
-                    familyName = (result["familyName"] as ILiteralNode).Value;
-                    x = int.Parse((result["x"] as ILiteralNode).Value);
-                    y = int.Parse((result["y"] as ILiteralNode).Value);
+                            var result = results.SingleOrDefault();
+
+                            if (result == null)
+                            {
+                                throw new HttpResponseException(HttpStatusCode.NotFound);
+                            }
+
+                            member = new Uri((result["member"] as ILiteralNode).Value);
+                            givenName = (result["givenName"] as ILiteralNode).Value;
+                            familyName = (result["familyName"] as ILiteralNode).Value;
+                            x = int.Parse((result["x"] as ILiteralNode).Value);
+                            y = int.Parse((result["y"] as ILiteralNode).Value);
+                        }
+                    }
                 }
             }
         }
