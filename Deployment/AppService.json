@@ -132,7 +132,8 @@
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "6.9.1",
             "ApplicationInsightsInstrumentationKey": "[reference(resourceId(subscription().subscriptionId,parameters('operationsResourceGroupName'),'Microsoft.Insights/Components',parameters('applicationInsightsName')),'2014-04-01').InstrumentationKey]",
-            "NotFoundImageId": "[parameters('photoNotFoundImageId')]"
+            "NotFoundImageId": "[parameters('photoNotFoundImageId')]",
+            "SubscriptionKey": ""
           }
         },
         {
@@ -148,12 +149,12 @@
               "value": "[parameters('photoStorageAccountEndpoint')]",
               "type": "Custom"
             },
-            "SparqlEndpoint": {
-              "value": "",
-              "type": "Custom"
-            },
             "PhotoCache": {
               "value": "[parameters('photoCacheAccountEndpoint')]",
+              "type": "Custom"
+            },
+            "FixedQuery": {
+              "value": "",
               "type": "Custom"
             }
           }
