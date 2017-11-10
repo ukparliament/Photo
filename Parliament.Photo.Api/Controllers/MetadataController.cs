@@ -10,7 +10,9 @@
     {
         public IXmpMeta Get(string id)
         {
-            return null;
+            ImageController.Query(id, out Uri member, out string givenName, out string familyName, out int x, out int y);
+
+            return this.Get(id, member, givenName, familyName);
         }
 
         public IXmpMeta Get(string id, Uri member, string givenName, string familyName)

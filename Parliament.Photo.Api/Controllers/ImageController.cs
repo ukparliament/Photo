@@ -76,7 +76,7 @@
             return container.GetBlockBlobReference(key);
         }
 
-        private static void Query(string id, out Uri member, out string givenName, out string familyName, out int x, out int y)
+        internal static void Query(string id, out Uri member, out string givenName, out string familyName, out int x, out int y)
         {
             var subscriptionKey = ConfigurationManager.AppSettings["SubscriptionKey"];
 
