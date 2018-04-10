@@ -47,11 +47,12 @@ foreach($connection in $connectionStrings){
 	}
 }
 
-Log "Sets new subscription key"
+Log "Sets new settings"
 $settings["SubscriptionKey"]=$subscription.PrimaryKey
+$settings["ApiVersion"]=$APIPrefix
 
 Log "Sets new data connection"
-$connections["FixedQuery"]=@{Type="Custom";Value="https://$APIManagementName.azure-api.net/$APIPrefix/fixed-query/"}
+$connections["FixedQuery"]=@{Type="Custom";Value="https://$APIManagementName.azure-api.net/query/"}
 
 Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -ConnectionStrings $connections
 
