@@ -79,6 +79,7 @@
         internal static void Query(string id, out Uri member, out string givenName, out string familyName, out int x, out int y)
         {
             var subscriptionKey = ConfigurationManager.AppSettings["SubscriptionKey"];
+            var apiVersion = ConfigurationManager.AppSettings["ApiVersion"];
 
             var endpointString = ConfigurationManager.ConnectionStrings["FixedQuery"].ConnectionString;
             var endpoint = new Uri(string.Format("{0}photo_details?photo_id={1}", endpointString, id));
@@ -87,6 +88,7 @@
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/csv"));
                 client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+                client.DefaultRequestHeaders.Add("Api-Version", apiVersion);
 
                 using (var stream = client.GetStreamAsync(endpoint).Result)
                 {
