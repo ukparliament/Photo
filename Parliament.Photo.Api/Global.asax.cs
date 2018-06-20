@@ -60,6 +60,7 @@
                     new NotFoundPayloadHandler()
             });
 
+            config.Routes.MapHttpRoute("OpenApiDefinition", "openapi.json", new { controller = "OpenApiDefinition" });
             config.Routes.MapHttpRoute("Favicon", "favicon.ico", new { controller = "BadRequest" });
             config.Routes.MapHttpRoute("Metadata", "{id}.xmp", new { controller = "Metadata" });
             config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" }, null, imagePipeline);

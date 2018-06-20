@@ -148,6 +148,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Secrets.config" />
+    <EmbeddedResource Include="OpenApiDefinition.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -167,6 +168,7 @@
     <Compile Include="Controllers\Configuration\BadRequestControllerConfigurationAttribute.cs" />
     <Compile Include="Controllers\Configuration\DefaultMethodSelector.cs" />
     <Compile Include="Controllers\Configuration\ImageControllerConfigurationAttribute.cs" />
+    <Compile Include="Controllers\OpenApiDefinitionController.cs" />
     <Compile Include="HttpErrorXmlFormatter.cs" />
     <Compile Include="HttpErrorJsonFormatter.cs" />
     <Compile Include="MappingData.cs" />
