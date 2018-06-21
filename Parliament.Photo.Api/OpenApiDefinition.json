@@ -10,6 +10,137 @@
     }
   ],
   "components": {
+    "schemas": {
+      "metadataResponseModel": {
+        "type": "object",
+        "properties": {
+          "?xpacket": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "@begin": {
+                  "type": "string"
+                },
+                "@id": {
+                  "type": "string"
+                },
+                "end": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "x:xmpmeta": {
+            "type": "object",
+            "properties": {
+              "@xmlns:x": {
+                "type": "string"
+              },
+              "@x:xmptk": {
+                "type": "string"
+              },
+              "rdf:RDF": {
+                "type": "object",
+                "properties": {
+                  "@xmlns:rdf": {
+                    "type": "string"
+                  },
+                  "rdf:Description": {
+                    "type": "object",
+                    "properties": {
+                      "@rdf:about": {
+                        "type": "string"
+                      },
+                      "@xmlns:Iptc4xmpCore": {
+                        "type": "string"
+                      },
+                      "@xmlns:photoshop": {
+                        "type": "string"
+                      },
+                      "@xmlns:dc": {
+                        "type": "string"
+                      },
+                      "@xmlns:schema": {
+                        "type": "string"
+                      },
+                      "@Iptc4xmpCore:CiAdrCity": {
+                        "type": "string"
+                      },
+                      "@Iptc4xmpCore:CiAdrCtry": {
+                        "type": "string"
+                      },
+                      "@Iptc4xmpCore:CiAdrRegion": {
+                        "type": "string"
+                      },
+                      "@Iptc4xmpCore:CiEmailWork": {
+                        "type": "string"
+                      },
+                      "@Iptc4xmpCore:CiTelWork": {
+                        "type": "string"
+                      },
+                      "@Iptc4xmpCore:CiUrlWork": {
+                        "type": "string"
+                      },
+                      "@photoshop:Source": {
+                        "type": "string"
+                      },
+                      "@photoshop:Credit": {
+                        "type": "string"
+                      },
+                      "@photoshop:DateCreated": {
+                        "type": "string"
+                      },
+                      "@dc:rights": {
+                        "type": "string"
+                      },
+                      "@dc:title": {
+                        "type": "string"
+                      },
+                      "@dc:description": {
+                        "type": "string"
+                      },
+                      "rdf:type": {
+                        "type": "object",
+                        "properties": {
+                          "@rdf:resource": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "schema:imageHasSubject": {
+                        "type": "object",
+                        "properties": {
+                          "@rdf:parseType": {
+                            "type": "string"
+                          },
+                          "rdf:value": {
+                            "type": "object",
+                            "properties": {
+                              "@rdf:resource": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "rdf:type": {
+                            "type": "object",
+                            "properties": {
+                              "@rdf:resource": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "responses": {
       "imageResponse": {
         "description": "Image",
@@ -20,8 +151,21 @@
           "image/gif": {}
         }
       },
+      "metadataResponse": {
+        "description": "Metadata",
+        "content": {
+          "application/rdf+xml": {
+            "schema": {
+              "$ref": "#/components/schemas/metadataResponseModel"
+            }
+          }
+        }
+      },
       "badRequest": {
         "description": "Bad request"
+      },
+      "notAcceptable": {
+        "description": "Not acceptable"
       }
     }
   },
@@ -91,6 +235,9 @@
           },
           "400": {
             "$ref": "#/components/responses/badRequest"
+          },
+          "406": {
+            "$ref": "#/components/responses/notAcceptable"
           }
         }
       }
@@ -106,32 +253,11 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "member",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "givenName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "familyName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/imageResponse"
+            "$ref": "#/components/responses/metadataResponse"
           },
           "400": {
             "$ref": "#/components/responses/badRequest"
