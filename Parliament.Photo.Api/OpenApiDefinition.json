@@ -1,7 +1,16 @@
 ﻿{
   "openapi": "3.0.1",
   "info": {
-    "title": "Photo API",
+    "title": "Search API",
+    "description": "Performs search on parliament.uk domain. Implements [OpenSearch specification](https://github.com/dewitt/opensearch).",
+    "contact": {
+      "name": "Data & Search team at UK Parliament",
+      "email": "data@parliament.uk"
+    },
+    "license": {
+      "name": "Open Parliament Licence",
+      "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence"
+    },
     "version": "Live"
   },
   "servers": [
@@ -10,137 +19,6 @@
     }
   ],
   "components": {
-    "schemas": {
-      "metadataResponseModel": {
-        "type": "object",
-        "properties": {
-          "?xpacket": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "@begin": {
-                  "type": "string"
-                },
-                "@id": {
-                  "type": "string"
-                },
-                "end": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "x:xmpmeta": {
-            "type": "object",
-            "properties": {
-              "@xmlns:x": {
-                "type": "string"
-              },
-              "@x:xmptk": {
-                "type": "string"
-              },
-              "rdf:RDF": {
-                "type": "object",
-                "properties": {
-                  "@xmlns:rdf": {
-                    "type": "string"
-                  },
-                  "rdf:Description": {
-                    "type": "object",
-                    "properties": {
-                      "@rdf:about": {
-                        "type": "string"
-                      },
-                      "@xmlns:Iptc4xmpCore": {
-                        "type": "string"
-                      },
-                      "@xmlns:photoshop": {
-                        "type": "string"
-                      },
-                      "@xmlns:dc": {
-                        "type": "string"
-                      },
-                      "@xmlns:schema": {
-                        "type": "string"
-                      },
-                      "@Iptc4xmpCore:CiAdrCity": {
-                        "type": "string"
-                      },
-                      "@Iptc4xmpCore:CiAdrCtry": {
-                        "type": "string"
-                      },
-                      "@Iptc4xmpCore:CiAdrRegion": {
-                        "type": "string"
-                      },
-                      "@Iptc4xmpCore:CiEmailWork": {
-                        "type": "string"
-                      },
-                      "@Iptc4xmpCore:CiTelWork": {
-                        "type": "string"
-                      },
-                      "@Iptc4xmpCore:CiUrlWork": {
-                        "type": "string"
-                      },
-                      "@photoshop:Source": {
-                        "type": "string"
-                      },
-                      "@photoshop:Credit": {
-                        "type": "string"
-                      },
-                      "@photoshop:DateCreated": {
-                        "type": "string"
-                      },
-                      "@dc:rights": {
-                        "type": "string"
-                      },
-                      "@dc:title": {
-                        "type": "string"
-                      },
-                      "@dc:description": {
-                        "type": "string"
-                      },
-                      "rdf:type": {
-                        "type": "object",
-                        "properties": {
-                          "@rdf:resource": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "schema:imageHasSubject": {
-                        "type": "object",
-                        "properties": {
-                          "@rdf:parseType": {
-                            "type": "string"
-                          },
-                          "rdf:value": {
-                            "type": "object",
-                            "properties": {
-                              "@rdf:resource": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "rdf:type": {
-                            "type": "object",
-                            "properties": {
-                              "@rdf:resource": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "responses": {
       "imageResponse": {
         "description": "Image",
@@ -149,14 +27,12 @@
           "image/png": {},
           "image/webp": {},
           "image/gif": {}
-        }
-      },
-      "metadataResponse": {
-        "description": "Metadata",
-        "content": {
-          "application/rdf+xml": {
+        },
+        "headers": {
+          "Content-Disposition": {
+            "description": "If download parameter is set to true then this header is present",
             "schema": {
-              "$ref": "#/components/schemas/metadataResponseModel"
+              "type": "string"
             }
           }
         }
@@ -244,7 +120,7 @@
     },
     "/{id}.xmp": {
       "get": {
-        "summary": "Image metadata",
+        "summary": "Image metadata in XMP format (Extensible Metadata Platform)",
         "parameters": [
           {
             "name": "id",
@@ -257,7 +133,11 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/metadataResponse"
+            "description": "Image metadata",
+            "content": {
+              "application/rdf+xml": {
+              }
+            }
           },
           "400": {
             "$ref": "#/components/responses/badRequest"
