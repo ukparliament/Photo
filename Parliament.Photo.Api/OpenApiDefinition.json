@@ -1,8 +1,8 @@
 ﻿{
   "openapi": "3.0.1",
   "info": {
-    "title": "Search API",
-    "description": "Performs search on parliament.uk domain. Implements [OpenSearch specification](https://github.com/dewitt/opensearch).",
+    "title": "Photo API",
+    "description": "Serves members' photos",
     "contact": {
       "name": "Data & Search team at UK Parliament",
       "email": "data@parliament.uk"
