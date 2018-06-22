@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Photo API",
-    "description": "Serves members' photos",
+    "description": "Serves members' photos. Throttled at 100 requests per second per IP address.",
     "contact": {
       "name": "Data & Search team at UK Parliament",
       "email": "data@parliament.uk"
