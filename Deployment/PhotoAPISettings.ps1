@@ -54,6 +54,6 @@ $settings["ApiVersion"]=$APIPrefix
 Log "Sets new data connection"
 $connections["FixedQuery"]=@{Type="Custom";Value="https://$APIManagementName.azure-api.net/query/"}
 
-Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -ConnectionStrings $connections
+Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -ConnectionStrings $connections -AppSettings $settings
 
 Log "Job well done!"
