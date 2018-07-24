@@ -10,7 +10,6 @@
     using System.Web;
     using System.Web.Http;
     using System.Web.Http.Dispatcher;
-    using System.Web.Http.ExceptionHandling;
 
     public class Global : HttpApplication
     {
@@ -66,8 +65,6 @@
             config.Routes.MapHttpRoute("ImageWithExtension", "{id}.{ext}", new { controller = "Image" }, null, imagePipeline);
             config.Routes.MapHttpRoute("ImageNoExtension", "{id}", new { controller = "Image" }, null, imagePipeline);
             config.Routes.MapHttpRoute("CatchAllBadRequest", "{*uri}", new { controller = "BadRequest" });
-
-            config.Services.Add(typeof(IExceptionLogger), new AIExceptionLogger());
 
             config.Formatters.Clear();
             config.Formatters.Add(new HttpErrorJsonFormatter());
