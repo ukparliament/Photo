@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deployment", "Deployment", 
 		Deployment\PhotoAPISettings.ps1 = Deployment\PhotoAPISettings.ps1
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photo", "Photo\Photo.csproj", "{D33E53A9-F279-48CF-811C-4A2BA1885DC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{CD0C5FFE-29B5-4FCE-BD3B-E8216C95BB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD0C5FFE-29B5-4FCE-BD3B-E8216C95BB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD0C5FFE-29B5-4FCE-BD3B-E8216C95BB64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33E53A9-F279-48CF-811C-4A2BA1885DC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33E53A9-F279-48CF-811C-4A2BA1885DC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33E53A9-F279-48CF-811C-4A2BA1885DC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33E53A9-F279-48CF-811C-4A2BA1885DC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,149 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Photo API",
+    "description": "Serves members' photos. Throttled at 100 requests per second per IP address.",
+    "contact": {
+      "name": "Data & Search team at UK Parliament",
+      "email": "data@parliament.uk"
+    },
+    "license": {
+      "name": "Open Parliament Licence",
+      "url": "https://www.parliament.uk/site-information/copyright-parliament/open-parliament-licence"
+    },
+    "version": "Live"
+  },
+  "servers": [
+    {
+      "url": "https://api.parliament.uk/photo"
+    }
+  ],
+  "components": {
+    "responses": {
+      "imageResponse": {
+        "description": "Image",
+        "content": {
+          "image/jpeg": {},
+          "image/png": {},
+          "image/webp": {},
+          "image/gif": {}
+        },
+        "headers": {
+          "Content-Disposition": {
+            "description": "If download parameter is set to true then this header is present",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "badRequest": {
+        "description": "Bad request"
+      },
+      "notAcceptable": {
+        "description": "Not acceptable"
+      }
+    }
+  },
+  "paths": {
+    "/{id}{ext}": {
+      "get": {
+        "summary": "Image",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ext",
+            "in": "path",
+            "required": true,
+            "allowEmptyValue": true,
+            "schema": {
+              "type": "string",
+              "enum": [ "", ".jpg", ".jpe", ".jpeg", ".png", ".webp", ".gif" ]
+            }
+          },
+          {
+            "name": "width",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "height",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "crop",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [ "MCU_3:2", "MCU_3:4", "CU_1:1", "CU_5:2" ]
+            }
+          },
+          {
+            "name": "download",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "quality",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/imageResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          },
+          "406": {
+            "$ref": "#/components/responses/notAcceptable"
+          }
+        }
+      }
+    },
+    "/{id}.xmp": {
+      "get": {
+        "summary": "Image metadata in XMP format (Extensible Metadata Platform)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image metadata",
+            "content": {
+              "application/rdf+xml": {
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/badRequest"
+          }
+        }
+      }
+    }
+  }
+}
