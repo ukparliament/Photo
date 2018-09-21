@@ -1,8 +1,4 @@
-﻿
-.vs
-packages
+﻿.vs
 bin
 obj
-Secrets.config
 *.csproj.user
-PublishProfiles
