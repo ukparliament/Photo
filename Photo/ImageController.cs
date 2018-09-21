@@ -1,6 +1,5 @@
 ﻿namespace Photo
 {
-    using System;
     using System.Threading.Tasks;
     using ImageMagick;
     using Microsoft.AspNetCore.Mvc;
@@ -15,32 +14,46 @@
         [HttpGet("{id}.{format:extension?}")]
         [MiddlewareFilter(typeof(ImagePipeline))]
         [FormatFilter]
-        [TypeFilter(typeof(ImageCaching))]
+        [TypeFilter(typeof(ImageFilter))]
         public async Task<ActionResult> Get(ImageParameters parameters)
         {
+            ImageDetails details;
+            MagickImage image;
+
             try
             {
-                var image = await this.GetImage(parameters.Id);
+                details = await ImageDetails.GetById(parameters.Id);
+                image = await this.GetImage(parameters.Id);
 
-                ImageController.Crop(image, 0, 0, parameters.Crop);
-                ImageController.Resize(image, parameters.Width, parameters.Height);
-                ImageController.AddMetadata(parameters.Id, image, new Uri("urn:x"), "given", "family");
-                ImageController.Quality(image, parameters.Quality);
+                ImageController.AddMetadata(image, details);
+                ImageController.Process(image, parameters, details);
 
                 return this.Ok(image);
             }
-            catch (StorageException e) when (e.Message == "The specified blob does not exist.")
+            catch (ImageNotFoundException)
             {
-                return this.NotFound();
+                image = Resources.NotFoundImage;
+                this.Response.RegisterForDispose(image);
+                details = new ImageDetails(1898, 1300);
+
+                ImageController.Process(image, parameters, details);
+
+                return this.NotFound(image);
             }
+        }
+
+        private static void Process(MagickImage image, ImageParameters parameters, ImageDetails details)
+        {
+            ImageController.Crop(image, parameters, details);
+            ImageController.Resize(image, parameters);
+            ImageController.Quality(image, parameters);
         }
 
         private static CloudBlob GetRawSource(string id)
         {
-            var connectionString = "";
-            var account = CloudStorageAccount.Parse(connectionString);
+            var account = CloudStorageAccount.Parse(Program.Configuration.Storage.ConnectionString);
             var client = account.CreateCloudBlobClient();
-            var container = client.GetContainerReference("photo");
+            var container = client.GetContainerReference(Program.Configuration.Storage.Container);
             var blob = container.GetBlobReference(id);
 
             return blob;
@@ -50,26 +63,33 @@
         {
             var blob = GetRawSource(id);
 
-            using (var stream = await blob.OpenReadAsync())
+            try
             {
-                var magick = new MagickImage(stream);
+                using (var stream = await blob.OpenReadAsync())
+                {
+                    var magick = new MagickImage(stream);
 
-                this.Response.RegisterForDispose(magick);
+                    this.Response.RegisterForDispose(magick);
 
-                return magick;
+                    return magick;
+                }
+            }
+            catch (StorageException e) when (e.Message == "The specified blob does not exist.")
+            {
+                throw new ImageNotFoundException();
             }
         }
 
-        private static void Resize(MagickImage image, int? width, int? height)
+        private static void Resize(MagickImage image, ImageParameters parameters)
         {
-            if (width is null && height is null)
+            if (parameters.Width is null && parameters.Height is null)
             {
                 return;
             }
 
             var size = new MagickGeometry(
-                width.GetValueOrDefault(image.Width),
-                height.GetValueOrDefault(image.Height));
+                parameters.Width.GetValueOrDefault(image.Width),
+                parameters.Height.GetValueOrDefault(image.Height));
 
             image.ColorSpace = ColorSpace.RGB;
             image.Scale(size);
@@ -77,50 +97,42 @@
             image.ColorSpace = ColorSpace.sRGB;
         }
 
-        private static void Quality(MagickImage image, int? quality)
+        private static void Quality(MagickImage image, ImageParameters parameters)
         {
-            if (!(quality is null))
+            if (!(parameters.Quality is null))
             {
-                image.Quality = quality.Value;
+                image.Quality = parameters.Quality.Value;
             }
         }
 
-        private static void Crop(MagickImage magick, int x, int y, string crop)
+        private static void Crop(MagickImage magick, ImageParameters parameters, ImageDetails details)
         {
-            switch (crop)
+            switch (parameters.Crop)
             {
                 case null:
                     return;
 
                 case "MCU_3:2":
-                    magick.Crop(x - 1553, y - 789, 3108, 2072);
+                    magick.Crop(details.CenterX - 1553, details.CenterY - 789, 3108, 2072);
                     break;
 
                 case "MCU_3:4":
-                    magick.Crop(x - 789, y - 789, 1554, 2072);
+                    magick.Crop(details.CenterX - 789, details.CenterY - 789, 1554, 2072);
                     break;
 
                 case "CU_1:1":
-                    magick.Crop(x - 789, y - 706, 1554, 1554);
+                    magick.Crop(details.CenterX - 789, details.CenterY - 706, 1554, 1554);
                     break;
 
                 case "CU_5:2":
-                    magick.Crop(1, y - 670, 3795, 1518);
+                    magick.Crop(1, details.CenterY - 670, 3795, 1518);
                     break;
-
-                default:
-                    break;
-                    //throw new HttpResponseException(
-                    //    new HttpResponseMessage(HttpStatusCode.BadRequest)
-                    //    {
-                    //        Content = new StringContent("Allowed crop values:\n\tMCU_3:4\n\tMCU_3:2\n\tCU_1:1\n\tCU_5:2")
-                    //    });
             }
         }
 
-        private static void AddMetadata(string id, MagickImage magick, Uri member, string givenName, string familyName)
+        private static void AddMetadata(MagickImage magick, ImageDetails details)
         {
-            var xmp = MetadataController.Get(id, member, givenName, familyName);
+            var xmp = MetadataController.Get(details);
             var xmpBuffer = XmpMetaFactory.SerializeToBuffer(xmp, new SerializeOptions());
             var xmpProfile = new XmpProfile(xmpBuffer);
 

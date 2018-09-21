@@ -65,7 +65,7 @@
             "allowEmptyValue": true,
             "schema": {
               "type": "string",
-              "enum": [ "", ".jpg", ".jpe", ".jpeg", ".png", ".webp", ".gif" ]
+              "enum": [ "", ".jpg", ".png", ".webp", ".gif" ]
             }
           },
           {

@@ -18,9 +18,11 @@
 
         public string Format { get; set; }
 
+        public bool Download { get; set; }
+
         public override string ToString()
         {
-            var mediaType = WebUtility.UrlEncode(this.MediaType).ToLower();
+            var mediaType = WebUtility.UrlEncode(this.MediaType)?.ToLower() ?? string.Empty;
 
             return $"{this.Id}/{mediaType}/crop_{this.Crop}/dimensions_{this.Width}x{this.Height}/quality-{this.Quality}";
         }

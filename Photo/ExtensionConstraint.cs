@@ -10,7 +10,7 @@
         {
             var extension = values[routeKey] as string;
 
-            return Startup.Mappings.Any(mapping => mapping.Extension == extension);
+            return Program.Configuration.Mappings.Any(mapping => mapping.Extension == extension);
         }
     }
 }
