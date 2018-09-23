@@ -26,7 +26,6 @@
             return new TaskFactory().StartNew(() =>
             {
                 var image = (IMagickImage)context.Object;
-                //image.Settings.Compression = CompressionMethod.LZW;
                 image.Write(context.HttpContext.Response.Body, this.format);
             });
         }

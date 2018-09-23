@@ -24,7 +24,7 @@
         {
             var mediaType = WebUtility.UrlEncode(this.MediaType)?.ToLower() ?? string.Empty;
 
-            return $"{this.Id}/{mediaType}/crop_{this.Crop}/dimensions_{this.Width}x{this.Height}/quality-{this.Quality}";
+            return $"{this.Id}/{mediaType}/crop_{this.Crop}/dimensions_{this.Width}x{this.Height}/quality_{this.Quality}";
         }
     }
 }

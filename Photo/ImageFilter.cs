@@ -52,9 +52,9 @@
                 {
                     ImageFilter.Download(parameters, executedContext);
 
-                    //var cacheStream = await blob.OpenWriteAsync();
-                    //context.HttpContext.Response.RegisterForDispose(cacheStream);
-                    //context.HttpContext.Response.Body = new CacheStream(context.HttpContext.Response.Body, cacheStream);
+                    var cacheStream = await blob.OpenWriteAsync();
+                    context.HttpContext.Response.RegisterForDispose(cacheStream);
+                    context.HttpContext.Response.Body = new CacheStream(context.HttpContext.Response.Body, cacheStream);
 
                     headers.CacheControl = new CacheControlHeaderValue() { Public = true };
                     headers.LastModified = DateTimeOffset.UtcNow;
