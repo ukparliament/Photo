@@ -9,7 +9,8 @@ namespace Photo
             ("image/png", "png", MagickFormat.Png),
             ("image/webp", "webp", MagickFormat.WebP),
             ("image/gif", "gif", MagickFormat.Gif),
-            ("image/tiff", "tif", MagickFormat.Tif)
+            ("image/tiff", "tif", MagickFormat.Tif),
+            ("image/x-icon", "ico", MagickFormat.Ico)
         };
 
         public StorageConfiguration Storage { get; set; }
