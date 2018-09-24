@@ -6,6 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using ImageMagick;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Headers;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
@@ -39,7 +40,8 @@
             {
                 var cacheStream = await blob.OpenReadAsync();
                 context.HttpContext.Response.RegisterForDispose(cacheStream);
-                context.Result = new FileStreamResult(cacheStream, parameters.MediaType);
+
+                context.Result = parameters.CacheOnly ? new OkResult() as ActionResult : new FileStreamResult(cacheStream, parameters.MediaType) as ActionResult;
 
                 headers.CacheControl = new CacheControlHeaderValue() { Public = true };
                 headers.LastModified = blob.Properties.LastModified;
@@ -50,16 +52,18 @@
 
                 if (executedContext.Result is OkObjectResult)
                 {
-                    ImageFilter.Download(parameters, executedContext);
-
                     var cacheStream = await blob.OpenWriteAsync();
                     context.HttpContext.Response.RegisterForDispose(cacheStream);
-                    context.HttpContext.Response.Body = new CacheStream(context.HttpContext.Response.Body, cacheStream);
+
+                    var responseStream = parameters.CacheOnly ? Stream.Null : context.HttpContext.Response.Body;
+                    context.HttpContext.Response.Body = new CacheStream(responseStream, cacheStream);
 
                     headers.CacheControl = new CacheControlHeaderValue() { Public = true };
                     headers.LastModified = DateTimeOffset.UtcNow;
                 }
             }
+
+            ImageFilter.Download(parameters, context.HttpContext);
         }
 
         private ImageParameters GetParameters(ActionExecutingContext context)
@@ -99,17 +103,16 @@
             return container.GetBlockBlobReference(key);
         }
 
-        private static void Download(ImageParameters parameters, ActionExecutedContext context)
+        private static void Download(ImageParameters parameters, HttpContext context)
         {
             if (parameters.Download)
             {
-                var content = context.Result as OkObjectResult;
                 var mapping = Program.Configuration.Mappings.Single(row => row.MediaType == parameters.MediaType);
                 var extension = mapping.Extension;
                 var fileName = string.Format("{0}.{1}", parameters.Id, extension);
                 var disposition = new ContentDispositionHeaderValue("attachment") { FileName = fileName };
 
-                context.HttpContext.Response.Headers[HeaderNames.ContentDisposition] = disposition.ToString();
+                context.Response.Headers[HeaderNames.ContentDisposition] = disposition.ToString();
             }
         }
     }

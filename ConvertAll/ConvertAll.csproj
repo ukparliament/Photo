@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="GetPhotoUsage.query" />
     <None Remove="SharePointExport.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="GetPhotoUsage.query" />
     <EmbeddedResource Include="SharePointExport.json" />
   </ItemGroup>
 

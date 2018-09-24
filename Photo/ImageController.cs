@@ -34,7 +34,7 @@
             {
                 image = Resources.NotFoundImage;
                 this.Response.RegisterForDispose(image);
-                details = new ImageDetails(1898, 1300);
+                details = new ImageDetails(1898, 2657);
 
                 ImageController.Process(image, parameters, details);
 

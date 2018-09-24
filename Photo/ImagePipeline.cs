@@ -21,6 +21,7 @@
             {
                 mvc.OutputFormatters.Add(new ImageFormatter(mapping.MediaType, mapping.Format));
                 mvc.FormatterMappings.SetMediaTypeMappingForFormat(mapping.Extension, mapping.MediaType);
+                mvc.FormatterMappings.SetMediaTypeMappingForFormat(mapping.MediaType, mapping.MediaType);
             }
         }
     }

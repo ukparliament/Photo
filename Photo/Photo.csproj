@@ -6,9 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="NotFound.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <None Remove="NotFound.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="NotFound.png" />
   </ItemGroup>
 
   <ItemGroup>

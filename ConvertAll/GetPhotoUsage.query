@@ -1,0 +1,13 @@
+let formatEvents = customEvents
+| where cloud_RoleName contains "photo"
+| where isnotempty(customDimensions.["format"])
+| extend format = customDimensions.["format"];
+requests
+| where success == true
+| where url contains "/photo/"
+| join formatEvents on $left.operation_Id == $right.operation_Id
+| extend parameters = parseurl(url).["Query Parameters"]
+| project format = tostring(format), crop = tostring(parameters.["crop"]), width = toint(parameters.["width"]), height = toint(parameters.["height"]), quality = toint(parameters.["quality"])
+| summarize total = count() by format, crop, width, height, quality
+| where total > 1000
+| order by total desc
