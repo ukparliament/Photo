@@ -6,19 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="NotFound.png" />
+    <EmbeddedResource Include="OpenApiDocumentTemplate.json" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="NotFound.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="wwwroot\openapi.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="7.8.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />

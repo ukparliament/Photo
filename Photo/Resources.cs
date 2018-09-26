@@ -1,17 +1,30 @@
 ﻿namespace Photo
 {
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
-    using ImageMagick;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     public static class Resources
     {
-        internal static MagickImage NotFoundImage
+        public static JObject OpenApiDocument
         {
             get
             {
-                using (var stream = Assembly.GetEntryAssembly().GetManifestResourceStream("Photo.NotFound.png"))
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Photo.OpenApiDocumentTemplate.json"))
                 {
-                    return new MagickImage(stream);
+                    using (var reader = new StreamReader(stream))
+                    {
+                        using (var jsonReader = new JsonTextReader(reader))
+                        {
+                            dynamic document = JObject.Load(jsonReader);
+                            document.components.responses.imageResponse.content = new JObject(Configuration.Mappings.Select(m => new JProperty(m.MediaType, new JObject())));
+                            document.paths["/{id}.{extension}"].get.parameters[1].schema["enum"] = new JArray(Configuration.Mappings.Select(m => m.Extension));
+
+                            return document;
+                        }
+                    }
                 }
             }
         }

@@ -1,0 +1,167 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "UK Parliament Photo Service",
+    "description": "Serves members' photos. Throttled at 100 requests per second per IP address. \n\n [a](https://example.com)",
+    "contact": {
+      "name": "Data & Search team at UK Parliament",
+      "email": "data@parliament.uk",
+      "url": "https://twitter.com/UKParliData"
+    },
+    "license": {
+      "name": "Creative Commons Attribution",
+      "url": "https://creativecommons.org/licenses/by/3.0/"
+    },
+    "version": "",
+    "x-TODO-termsOfService": null
+  },
+  "components": {
+    "responses": {
+      "imageResponse": {
+        "description": "imageResponse DESCRIPTION",
+        "content": null,
+        "headers": {
+          "Content-Disposition": {
+            "description": "content-disposition DESCRIPTION",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "notFound": {
+        "description": "notFound DESCRIPTION"
+      },
+      "notAcceptable": {
+        "description": "notAcceptable DESCRIPTION"
+      }
+    },
+    "parameters": {
+      "id": {
+        "name": "id",
+        "in": "path",
+        "description": "id DESCRIPTION",
+        "required": true,
+        "schema": { "type": "string" },
+        "example": "S3bGSTqn"
+      },
+      "crop": {
+        "name": "crop",
+        "in": "query",
+        "description": "crop DESCRIPTION",
+        "schema": {
+          "type": "string",
+          "enum": [
+            "MCU_3:2",
+            "MCU_3:4",
+            "CU_1:1",
+            "CU_5:2"
+          ]
+        }
+      },
+      "width": {
+        "name": "width",
+        "in": "query",
+        "description": "width DESCRIPTION",
+        "schema": {
+          "type": "number"
+        }
+      },
+      "height": {
+        "name": "height",
+        "in": "query",
+        "description": "height DESCRIPTION",
+        "schema": {
+          "type": "number"
+        }
+      },
+      "quality": {
+        "name": "quality",
+        "in": "query",
+        "description": "quality DESCRIPTION",
+        "schema": {
+          "type": "number"
+        }
+      },
+      "download": {
+        "name": "download",
+        "in": "query",
+        "description": "download DESCRIPTION",
+        "schema": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/{id}": {
+      "get": {
+        "tags": [ "Image" ],
+        "description": "get DESCRIPTION",
+        "summary": "get SUMMARY",
+        "parameters": [
+          { "$ref": "#/components/parameters/id" },
+          { "$ref": "#/components/parameters/crop" },
+          { "$ref": "#/components/parameters/width" },
+          { "$ref": "#/components/parameters/height" },
+          { "$ref": "#/components/parameters/quality" },
+          { "$ref": "#/components/parameters/download" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/imageResponse" },
+          "404": { "$ref": "#/components/responses/notFound" },
+          "406": { "$ref": "#/components/responses/notAcceptable" }
+        }
+      }
+    },
+    "/{id}.{extension}": {
+      "get": {
+        "tags": [ "Image" ],
+        "description": "/{id}.{ext} get DESCRIPTION",
+        "summary": "/{id}.{ext} get SUMMARY",
+        "parameters": [
+          { "$ref": "#/components/parameters/id" },
+          {
+            "name": "extension",
+            "description": "extension DESCRIPTION",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": null
+            }
+          },
+          { "$ref": "#/components/parameters/crop" },
+          { "$ref": "#/components/parameters/width" },
+          { "$ref": "#/components/parameters/height" },
+          { "$ref": "#/components/parameters/quality" },
+          { "$ref": "#/components/parameters/download" }
+        ],
+        "responses": {
+          "200": { "$ref": "#/components/responses/imageResponse" },
+          "404": { "$ref": "#/components/responses/notFound" },
+          "406": { "$ref": "#/components/responses/notAcceptable" }
+        }
+      }
+    },
+    "/{id}.xmp": {
+      "get": {
+        "tags": [ "Metadata" ],
+        "description": "metadata get DESCRIPTION",
+        "summary": "metadata get SUMMARY",
+        "parameters": [
+          { "$ref": "#/components/parameters/id" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Image metadata",
+            "content": {
+              "application/rdf+xml": {}
+            }
+          },
+          "404": { "$ref": "#/components/responses/notFound" }
+        }
+      }
+    }
+  }
+}

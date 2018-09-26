@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Convert", "Convert\Convert.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConvertAll", "ConvertAll\ConvertAll.csproj", "{56F00529-8F56-4A8F-826C-B244695540CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoTests", "PhotoTests\PhotoTests.csproj", "{7317FFB6-79C1-494A-AE89-9967AAD2D02C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{56F00529-8F56-4A8F-826C-B244695540CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56F00529-8F56-4A8F-826C-B244695540CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56F00529-8F56-4A8F-826C-B244695540CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7317FFB6-79C1-494A-AE89-9967AAD2D02C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7317FFB6-79C1-494A-AE89-9967AAD2D02C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7317FFB6-79C1-494A-AE89-9967AAD2D02C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7317FFB6-79C1-494A-AE89-9967AAD2D02C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

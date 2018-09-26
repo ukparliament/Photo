@@ -86,7 +86,7 @@
                     (Stream s, Encoding e) => TextWriter.Null,
                     typeof(MagickImage),
                     null),
-                this.options.OutputFormatters,
+                this.options.OutputFormatters.OfType<ImageFormatter>().Cast<IOutputFormatter>().ToList(),
                 mediaTypes);
 
             key.MediaType = ((ImageFormatter)formatter)?.SupportedMediaTypes?.Single();
@@ -107,7 +107,7 @@
         {
             if (parameters.Download)
             {
-                var mapping = Program.Configuration.Mappings.Single(row => row.MediaType == parameters.MediaType);
+                var mapping = Configuration.Mappings.Single(row => row.MediaType == parameters.MediaType);
                 var extension = mapping.Extension;
                 var fileName = string.Format("{0}.{1}", parameters.Id, extension);
                 var disposition = new ContentDispositionHeaderValue("attachment") { FileName = fileName };

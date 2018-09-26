@@ -8,7 +8,7 @@
     public class MetadataController : Controller
     {
         [HttpGet("{id}.xmp")]
-        [MiddlewareFilter(typeof(MetadataPipeline))]
+        [Produces("application/rdf+xml")]
         public async Task<IXmpMeta> Get(string id)
         {
             var details = await ImageDetails.GetById(id);
