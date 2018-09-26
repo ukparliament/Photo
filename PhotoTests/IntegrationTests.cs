@@ -6,7 +6,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
-    public class MyTestClass
+    public class IntegrationTests
     {
         [TestMethod]
         public void OpenApi_endpoint_works()

@@ -51,12 +51,7 @@
         "description": "crop DESCRIPTION",
         "schema": {
           "type": "string",
-          "enum": [
-            "MCU_3:2",
-            "MCU_3:4",
-            "CU_1:1",
-            "CU_5:2"
-          ]
+          "enum": null
         }
       },
       "width": {

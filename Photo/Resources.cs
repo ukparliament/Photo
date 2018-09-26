@@ -20,6 +20,7 @@
                         {
                             dynamic document = JObject.Load(jsonReader);
                             document.components.responses.imageResponse.content = new JObject(Configuration.Mappings.Select(m => new JProperty(m.MediaType, new JObject())));
+                            document.components.parameters.crop.schema["enum"] = new JArray(Configuration.Crops.Select(m => m.Name));
                             document.paths["/{id}.{extension}"].get.parameters[1].schema["enum"] = new JArray(Configuration.Mappings.Select(m => m.Extension));
 
                             return document;
