@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "UK Parliament Photo Service",
-    "description": "Serves members' photos. Throttled at 100 requests per second per IP address. \n\n [a](https://example.com)",
+    "description": "Serves members' photos. Throttled at 100 requests per second per IP address.\n\nBackground: [Making history: official portraits and open images](https://pds.blog.parliament.uk/2017/07/21/mp-official-portraits-open-source-images/)",
     "contact": {
       "name": "Data & Search team at UK Parliament",
       "email": "data@parliament.uk",
@@ -18,11 +18,11 @@
   "components": {
     "responses": {
       "imageResponse": {
-        "description": "imageResponse DESCRIPTION",
+        "description": "imageResponse",
         "content": null,
         "headers": {
           "Content-Disposition": {
-            "description": "content-disposition DESCRIPTION",
+            "description": "content-disposition",
             "schema": {
               "type": "string"
             }
@@ -30,17 +30,17 @@
         }
       },
       "notFound": {
-        "description": "notFound DESCRIPTION"
+        "description": "notFound"
       },
       "notAcceptable": {
-        "description": "notAcceptable DESCRIPTION"
+        "description": "notAcceptable"
       }
     },
     "parameters": {
       "id": {
         "name": "id",
         "in": "path",
-        "description": "id DESCRIPTION",
+        "description": "id",
         "required": true,
         "schema": { "type": "string" },
         "example": "S3bGSTqn"
@@ -48,7 +48,7 @@
       "crop": {
         "name": "crop",
         "in": "query",
-        "description": "crop DESCRIPTION",
+        "description": "crop",
         "schema": {
           "type": "string",
           "enum": null
@@ -57,7 +57,7 @@
       "width": {
         "name": "width",
         "in": "query",
-        "description": "width DESCRIPTION",
+        "description": "width",
         "schema": {
           "type": "number"
         }
@@ -65,7 +65,7 @@
       "height": {
         "name": "height",
         "in": "query",
-        "description": "height DESCRIPTION",
+        "description": "height",
         "schema": {
           "type": "number"
         }
@@ -73,7 +73,7 @@
       "quality": {
         "name": "quality",
         "in": "query",
-        "description": "quality DESCRIPTION",
+        "description": "quality",
         "schema": {
           "type": "number"
         }
@@ -81,7 +81,7 @@
       "download": {
         "name": "download",
         "in": "query",
-        "description": "download DESCRIPTION",
+        "description": "download",
         "schema": {
           "type": "boolean"
         }
@@ -92,8 +92,8 @@
     "/{id}": {
       "get": {
         "tags": [ "Image" ],
-        "description": "get DESCRIPTION",
-        "summary": "get SUMMARY",
+        "description": "get",
+        "summary": "get",
         "parameters": [
           { "$ref": "#/components/parameters/id" },
           { "$ref": "#/components/parameters/crop" },
@@ -112,13 +112,13 @@
     "/{id}.{extension}": {
       "get": {
         "tags": [ "Image" ],
-        "description": "/{id}.{ext} get DESCRIPTION",
-        "summary": "/{id}.{ext} get SUMMARY",
+        "description": "/{id}.{ext} get",
+        "summary": "/{id}.{ext} get",
         "parameters": [
           { "$ref": "#/components/parameters/id" },
           {
             "name": "extension",
-            "description": "extension DESCRIPTION",
+            "description": "extension",
             "in": "path",
             "required": true,
             "schema": {
@@ -142,8 +142,8 @@
     "/{id}.xmp": {
       "get": {
         "tags": [ "Metadata" ],
-        "description": "metadata get DESCRIPTION",
-        "summary": "metadata get SUMMARY",
+        "description": "metadata get",
+        "summary": "metadata get",
         "parameters": [
           { "$ref": "#/components/parameters/id" }
         ],

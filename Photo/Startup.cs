@@ -56,7 +56,8 @@
 
         private static void ConfigureSwaggerUI(SwaggerUIOptions swaggerUI)
         {
-            swaggerUI.SwaggerEndpoint("/openapi.json", "live");
+            swaggerUI.DocumentTitle = "UK Parliament Photo Service";
+            swaggerUI.SwaggerEndpoint("./openapi.json", "live");
         }
     }
 }
