@@ -40,6 +40,7 @@
             xmp.SetProperty(XmpConstants.NsDC, "rights", "Attribution 3.0 Unported (CC BY 3.0)");
             xmp.SetProperty(XmpConstants.NsDC, "title", $"{details.GivenName} {details.FamilyName}");
             xmp.SetProperty(XmpConstants.NsDC, "description", $"{details.GivenName} {details.FamilyName} - UK Parliament official portraits 2017");
+            xmp.SetProperty(XmpConstants.NsDC, "creator", "Chris McAndrew / UK Parliament");
 
             // <rdf:Description rdf:about="http://id.parliament.uk/IMAGE1" />
             xmp.SetObjectName($"{idNs}{details.Id}");

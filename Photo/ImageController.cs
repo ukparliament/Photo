@@ -117,6 +117,19 @@
             var xmpProfile = new XmpProfile(xmpBuffer);
 
             image.AddProfile(xmpProfile);
+                       
+            var iptcProfile = new IptcProfile();
+            iptcProfile.SetValue(IptcTag.City, "London");
+            iptcProfile.SetValue(IptcTag.Country, "UK");
+            iptcProfile.SetValue(IptcTag.Contact, "chris@mcandrewphoto.co.uk, +447740424810,http://www.mcandrewphoto.co.uk");
+
+            iptcProfile.SetValue(IptcTag.CopyrightNotice, "Attribution 3.0 Unported (CC BY 3.0)");
+            iptcProfile.SetValue(IptcTag.Title, $"{details.GivenName} {details.FamilyName}");
+
+            iptcProfile.SetValue(IptcTag.Source, "Chris McAndrew / UK Parliament");
+            iptcProfile.SetValue(IptcTag.Credit, "Chris McAndrew / UK Parliament (Attribution 3.0 Unported (CC BY 3.0))");
+
+            image.AddProfile(iptcProfile);
         }
 
         private static MagickImage GetCaption(string caption)
