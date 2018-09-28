@@ -14,11 +14,11 @@ namespace Photo
             ("application/pdf", "pdf", MagickFormat.Pdf)
         };
 
-        internal static readonly (string Name, int OffsetX, int OffsetY, int Width, int Height)[] Crops = new[] {
+        internal static readonly (string Name, int? OffsetX, int OffsetY, int Width, int Height)[] Crops = new[] {
             ("MCU_3:2", 1553, 789, 3108, 2072),
             ("MCU_3:4", 789, 789, 1554, 2072),
             ("CU_1:1", 789, 706, 1554, 1554),
-            ("CU_5:2", 1, 670, 3795, 1518)
+            ("CU_5:2", null as int?, 670, 3795, 1518)
         };
 
 

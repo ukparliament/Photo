@@ -82,7 +82,13 @@
                 throw new UnkownCropException();
             }
 
-            image.Crop(details.CenterX - crop.OffsetX, details.CenterY - crop.OffsetY, crop.Width, crop.Height);
+            var x = 1;
+            if (!(crop.OffsetX is null))
+            {
+                x = details.CenterX - crop.OffsetX.Value;
+            }
+
+            image.Crop(x, details.CenterY - crop.OffsetY, crop.Width, crop.Height);
         }
 
         private static void Resize(MagickImage image, ImageParameters parameters)

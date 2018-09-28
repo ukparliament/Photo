@@ -10,6 +10,8 @@
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.WindowsAzure.Storage;
+    using Microsoft.WindowsAzure.Storage.Blob;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -24,6 +26,7 @@
             {
                 var config = Program.Config;
 
+                Console.WriteLine("d: Delete 5:2");
                 Console.WriteLine("c: Convert");
                 Console.WriteLine("w: Warm");
                 Console.WriteLine("esc: Exit");
@@ -31,6 +34,23 @@
 
                 switch (Console.ReadKey(true).Key)
                 {
+                    case ConsoleKey.D:
+                        Program.storage = config.GetValue<string>("Storage");
+
+                        var account = CloudStorageAccount.Parse(Program.storage);
+                        var client = account.CreateCloudBlobClient();
+                        var container = client.GetContainerReference("cache");
+
+                        var a = container.ListBlobsSegmentedAsync(null, true, Microsoft.WindowsAzure.Storage.Blob.BlobListingDetails.None, null, null, null, null).Result;
+                        var b = a.Results.Where(r => r.Uri.ToString().Contains("crop_CU_5:2")).Cast<CloudBlockBlob>();
+                        foreach (var item in b)
+                        {
+                            Console.WriteLine(item.Name);
+                            item.DeleteAsync().Wait();
+                        }
+
+                        break;
+
                     case ConsoleKey.C:
                         Console.WriteLine("Converting");
                         Console.WriteLine();
