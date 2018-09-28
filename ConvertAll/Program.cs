@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Net.Http;
@@ -135,13 +134,12 @@
 
             using (var client = new HttpClient())
             {
-                Console.WriteLine("Start {0} ({1})", mapping["PhotoID"], arg3);
-
-                var timer = Stopwatch.StartNew();
-
                 var response = client.PostAsync(Program.functionUrl, new StringContent(mapping.ToString(), Encoding.UTF8, "application/json")).Result;
 
-                Console.WriteLine("Finish {0} ({1}) with {2} in {3}", mapping["PhotoID"], arg3, response.StatusCode, timer.Elapsed);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("{0:d} {1} {2}", response.StatusCode, mapping["PhotoID"], mapping["ImageResourceUri"]);
+                }
             }
         }
 
