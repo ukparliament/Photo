@@ -4,9 +4,8 @@ namespace Photo
 {
     internal class Configuration
     {
-        // TODO: jpeg -> jpg
         internal static readonly (string MediaType, string Extension, MagickFormat Format)[] Mappings = new[] {
-            ("image/jpeg", "jpeg", MagickFormat.Jpg),
+            ("image/jpeg", "jpg", MagickFormat.Jpg),
             ("image/png", "png", MagickFormat.Png),
             ("image/webp", "webp", MagickFormat.WebP),
             ("image/gif", "gif", MagickFormat.Gif),
