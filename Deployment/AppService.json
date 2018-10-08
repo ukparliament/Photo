@@ -155,7 +155,7 @@
               "type": "Custom"
             },
             "FixedQuery": {
-              "value": "",
+              "value": "https://api.parliament.uk/query/",
               "type": "Custom"
             }
           }
