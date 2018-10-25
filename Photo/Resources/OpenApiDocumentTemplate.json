@@ -19,7 +19,7 @@
     "responses": {
       "imageResponse": {
         "description": "imageResponse",
-        "content": null,
+        "content": {},
         "headers": {
           "Content-Disposition": {
             "description": "content-disposition",
@@ -51,7 +51,7 @@
         "description": "crop",
         "schema": {
           "type": "string",
-          "enum": null
+          "enum": []
         }
       },
       "width": {
@@ -123,7 +123,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": null
+              "enum": []
             }
           },
           { "$ref": "#/components/parameters/crop" },

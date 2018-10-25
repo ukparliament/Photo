@@ -1,31 +1,33 @@
 ﻿namespace Photo
 {
-    using System.IO;
     using System.Linq;
     using System.Reflection;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+    using Microsoft.OpenApi.Any;
+    using Microsoft.OpenApi.Exceptions;
+    using Microsoft.OpenApi.Models;
+    using Microsoft.OpenApi.Readers;
 
     public static class Resources
     {
-        public static JObject OpenApiDocument
+        public static OpenApiDocument OpenApiDocument
         {
             get
             {
                 using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Photo.Resources.OpenApiDocumentTemplate.json"))
                 {
-                    using (var reader = new StreamReader(stream))
-                    {
-                        using (var jsonReader = new JsonTextReader(reader))
-                        {
-                            dynamic document = JObject.Load(jsonReader);
-                            document.components.responses.imageResponse.content = new JObject(Configuration.Mappings.Select(m => new JProperty(m.MediaType, new JObject())));
-                            document.components.parameters.crop.schema["enum"] = new JArray(Configuration.Crops.Select(m => m.Name));
-                            document.paths["/{id}.{extension}"].get.parameters[1].schema["enum"] = new JArray(Configuration.Mappings.Select(m => m.Extension));
+                    var reader = new OpenApiStreamReader();
+                    var document = reader.Read(stream, out var diagnostic);
 
-                            return document;
-                        }
+                    if (diagnostic.Errors.Any())
+                    {
+                        throw new OpenApiException(diagnostic.Errors.First().Message);
                     }
+
+                    document.Components.Responses["imageResponse"].Content = Configuration.PhotoMappings.ToDictionary(m => m.MediaType, m => new OpenApiMediaType());
+                    document.Components.Parameters["crop"].Schema.Enum = Configuration.Crops.Select(m => new OpenApiString(m.Name) as IOpenApiAny).ToList();
+                    document.Paths["/{id}.{extension}"].Operations[OperationType.Get].Parameters[1].Schema.Enum = Configuration.PhotoMappings.Select(m => new OpenApiString(m.Extension) as IOpenApiAny).ToList();
+
+                    return document;
                 }
             }
         }

@@ -107,7 +107,7 @@
         {
             if (parameters.Download)
             {
-                var mapping = Configuration.Mappings.Single(row => row.MediaType == parameters.MediaType);
+                var mapping = Configuration.PhotoMappings.Single(row => row.MediaType == parameters.MediaType);
                 var extension = mapping.Extension;
                 var fileName = string.Format("{0}.{1}", parameters.Id, extension);
                 var disposition = new ContentDispositionHeaderValue("attachment") { FileName = fileName };

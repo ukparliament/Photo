@@ -41,9 +41,16 @@
 
             mvc.OutputFormatters.Add(new MetadataFormatter());
 
-            foreach (var mapping in Configuration.Mappings)
+            foreach (var mapping in Configuration.PhotoMappings)
             {
                 mvc.OutputFormatters.Add(new ImageFormatter(mapping.MediaType, mapping.Format));
+                mvc.FormatterMappings.SetMediaTypeMappingForFormat(mapping.Extension, mapping.MediaType);
+                mvc.FormatterMappings.SetMediaTypeMappingForFormat(mapping.MediaType, mapping.MediaType);
+            }
+
+            foreach (var mapping in Configuration.OpenApiMappings)
+            {
+                mvc.OutputFormatters.Insert(0, new OpenApiFormatter(mapping.MediaType, mapping.WriterType));
                 mvc.FormatterMappings.SetMediaTypeMappingForFormat(mapping.Extension, mapping.MediaType);
                 mvc.FormatterMappings.SetMediaTypeMappingForFormat(mapping.MediaType, mapping.MediaType);
             }
@@ -51,13 +58,14 @@
 
         private static void ConfigureRouteOptions(RouteOptions routes)
         {
-            routes.ConstraintMap.Add("extension", typeof(ExtensionConstraint));
+            routes.ConstraintMap.Add("image", typeof(ImageExtensionConstraint));
+            routes.ConstraintMap.Add("openapi", typeof(OpenApiExtensionConstraint));
         }
 
         private static void ConfigureSwaggerUI(SwaggerUIOptions swaggerUI)
         {
             swaggerUI.DocumentTitle = "UK Parliament Photo Service";
-            swaggerUI.SwaggerEndpoint("./openapi.json", "live");
+            swaggerUI.SwaggerEndpoint("./openapi", "live");
         }
     }
 }

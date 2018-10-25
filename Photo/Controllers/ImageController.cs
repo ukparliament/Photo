@@ -12,7 +12,7 @@
 
     public class ImageController : Controller
     {
-        [HttpGet("{id}.{format:extension?}")]
+        [HttpGet("{id}.{format:image?}")]
         [FormatFilter]
         [TypeFilter(typeof(ImageFilter))]
         public async Task<ActionResult> Get(ImageParameters parameters)

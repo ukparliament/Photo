@@ -1,10 +1,12 @@
-﻿using ImageMagick;
-
-namespace Photo
+﻿namespace Photo
 {
+    using System;
+    using ImageMagick;
+    using Microsoft.OpenApi.Writers;
+
     internal class Configuration
     {
-        internal static readonly (string MediaType, string Extension, MagickFormat Format)[] Mappings = new[] {
+        internal static readonly (string MediaType, string Extension, MagickFormat Format)[] PhotoMappings = new[] {
             ("image/jpeg", "jpg", MagickFormat.Jpg),
             ("image/png", "png", MagickFormat.Png),
             ("image/webp", "webp", MagickFormat.WebP),
@@ -14,18 +16,17 @@ namespace Photo
             ("application/pdf", "pdf", MagickFormat.Pdf)
         };
 
+        internal static readonly (string MediaType, string Extension, Type WriterType)[] OpenApiMappings = new[] {
+            ("application/json", "json", typeof(OpenApiJsonWriter)),
+            ("text/vnd.yaml", "yaml", typeof(OpenApiYamlWriter))
+        };
+
         internal static readonly (string Name, int? OffsetX, int OffsetY, int Width, int Height)[] Crops = new[] {
             ("MCU_3:2", 1553, 789, 3108, 2072),
             ("MCU_3:4", 789, 789, 1554, 2072),
             ("CU_1:1", 789, 706, 1554, 1554),
             ("CU_5:2", null as int?, 670, 3795, 1518)
         };
-
-
-
-
-
-
 
         public StorageConfiguration Storage { get; set; }
 
