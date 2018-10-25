@@ -3,15 +3,21 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc.Testing;
     using Microsoft.OpenApi;
     using Microsoft.OpenApi.Readers;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Photo;
 
     [TestClass]
     public class IntegrationTests
     {
-        public static IEnumerable<object[]> Extensions
+        private static WebApplicationFactory<Startup> factory;
+        private static HttpClient client;
+
+        public static IEnumerable<object[]> OpenApiExtensions
         {
             get
             {
@@ -22,19 +28,33 @@
             }
         }
 
-        [TestMethod]
-        [DynamicData(nameof(Extensions))]
-        public void OpenApi_endpoint_works(string extension)
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
         {
-            using (var factory = new WebApplicationFactory<Photo.Startup>())
+            factory = new WebApplicationFactory<Startup>();
+            client = factory.CreateClient();
+        }
+
+        [ClassCleanup]
+        public static void Cleanup()
+        {
+            client.Dispose();
+            factory.Dispose();
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(OpenApiExtensions))]
+        public async Task OpenApi_endpoint_works(string extension)
+        {
+            using (var factory = new WebApplicationFactory<Startup>())
             {
                 using (var client = factory.CreateClient())
                 {
-                    using (var response = client.GetAsync($"/openapi{extension}").Result)
+                    using (var response = await client.GetAsync($"/openapi{extension}"))
                     {
                         var reader = new OpenApiStreamReader();
 
-                        using (var stream = response.Content.ReadAsStreamAsync().Result)
+                        using (var stream = await response.Content.ReadAsStreamAsync())
                         {
                             reader.Read(stream, out var diagnostic);
 
