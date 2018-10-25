@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="OpenApiDocumentTemplate.json" />
+    <EmbeddedResource Include="Resources\OpenApiDocumentTemplate.json" />
   </ItemGroup>
 
   <ItemGroup>

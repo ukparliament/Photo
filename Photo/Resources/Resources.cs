@@ -12,7 +12,7 @@
         {
             get
             {
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Photo.OpenApiDocumentTemplate.json"))
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Photo.Resources.OpenApiDocumentTemplate.json"))
                 {
                     using (var reader = new StreamReader(stream))
                     {
