@@ -40,8 +40,8 @@ foreach($set in $webAppSettings){
 }
 
 Log "Sets new settings"
-$settings["SubscriptionKey"]=$subscription.PrimaryKey
-$settings["ApiVersion"]=$APIPrefix
+$settings["Query__SubscriptionKey"]=$subscription.PrimaryKey
+$settings["Query__ApiVersion"]=$APIPrefix
 
 Set-AzureRmWebApp -ResourceGroupName $APIResourceGroupName -Name $PhotoAPIName -AppSettings $settings
 

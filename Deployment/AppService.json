@@ -11,19 +11,7 @@
     "applicationPlanName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the Application Insights."
-      }
-    },
-    "operationsResourceGroupName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Resource Group where backup storage is."
-      }
-    },
-    "applicationInsightsName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Application Insights."
+        "description": "Name of the Application plan."
       }
     },
     "photoStorageAccountEndpoint": {
@@ -36,12 +24,6 @@
       "type": "string",
       "metadata": {
         "description": "Connection string for cache Azure Storage (should be r/w SAS)."
-      }
-    },
-    "photoNotFoundImageId": {
-      "type": "string",
-      "metadata": {
-        "description": "Id of the default image."
       }
     },
     "apiManagementIP": {
@@ -131,35 +113,15 @@
           ],
           "properties": {
             "WEBSITE_NODE_DEFAULT_VERSION": "6.9.1",
-            "ApplicationInsightsInstrumentationKey": "[reference(resourceId(subscription().subscriptionId,parameters('operationsResourceGroupName'),'Microsoft.Insights/Components',parameters('applicationInsightsName')),'2014-04-01').InstrumentationKey]",
-            "NotFoundImageId": "[parameters('photoNotFoundImageId')]",
-            "SubscriptionKey": "",
-            "ApiVersion": ""
+            "Cache__ConnectionString": "[parameters('photoCacheAccountEndpoint')]",
+            "Cache__Container": "cache",
+            "Storage__ConnectionString": "[parameters('photoStorageAccountEndpoint')]",
+            "Storage__Container": "photo",
+            "Query__Endpoint": "https://api.parliament.uk/query/",
+            "Query__SubscriptionKey": "",
+            "Query__ApiVersion": ""
           }
-        },
-        {
-          "comments": "Connection strings used by the App",
-          "apiVersion": "2015-08-01",
-          "name": "connectionstrings",
-          "type": "config",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('photoAPIName'))]"
-          ],
-          "properties": {
-            "PhotoStorage": {
-              "value": "[parameters('photoStorageAccountEndpoint')]",
-              "type": "Custom"
-            },
-            "PhotoCache": {
-              "value": "[parameters('photoCacheAccountEndpoint')]",
-              "type": "Custom"
-            },
-            "FixedQuery": {
-              "value": "https://api.parliament.uk/query/",
-              "type": "Custom"
-            }
-          }
-        }
+        }        
       ],
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('applicationPlanName'))]"
